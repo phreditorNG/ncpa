@@ -6,13 +6,6 @@ if ! id -Gn "${scriptUser}" | grep -q -w admin; then
     exit 1
 fi
 
-
-hasXcode=$(xcode-select -p 2>/dev/null;echo $?)
-if [[ $hasXcode == "2" ]]; then
-    echo "\n    ATTENTION! The Xcode Command Line Tools are required to run this installer.\n    Enter 'sudo xcode-select --install' on the command line to install them.\n    Then, re-run this installer.\n"
-    exit
-fi
-
 # These values are set in the ncpa.cfg for the user to drop permissions to
 username="nagios"
 groupname="nagios"
@@ -147,13 +140,6 @@ if [ ${upgrade} -eq "1" ]; then
     echo "Done."
 fi
 
-# Tell executables to search homedir for Python, so it uses packaged version
-echo -n "    Updating executable dyld search paths... "
-install_name_tool -change "/usr/local/opt/python@2/Frameworks/Python.framework/Versions/2.7/Python" "${homedir}/Python" "${homedir}/ncpa_listener"
-
-install_name_tool -change "/usr/local/opt/python@2/Frameworks/Python.framework/Versions/2.7/Python" "${homedir}/Python" "${homedir}/ncpa_passive"
-echo "Done."
-
 echo -n "    Starting NCPA... "
 launchctl load /Library/LaunchDaemons/com.nagios.ncpa.listener.plist
 launchctl load /Library/LaunchDaemons/com.nagios.ncpa.passive.plist
@@ -182,12 +168,6 @@ listNCPAcomponents() {
 
     echo "\nHome dir?:"
     ls -al /usr/local | grep ncpa
-
-    echo "\nncpa_listener search path?:"
-    otool -L "${homedir}/ncpa_listener"
-
-    echo "\nncpa_passive search path?:"
-    otool -L "${homedir}/ncpa_passive"
 }
 
 listNCPAcomponents

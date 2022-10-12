@@ -1,9 +1,3 @@
-Installing NCPA
-
-Note:
-This installer requires that the Xcode Command Line Tools be installed on the server.
-The installer will prompt you to do this installation if the tools aren't available.
-
 Installing NCPA:
     1. Download MacOS archive (https://www.nagios.org/ncpa/#downloads)
     2. Double click open the disk image file to mount it
