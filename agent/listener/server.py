@@ -877,7 +877,7 @@ def api_websocket(accessor=None):
         ws = request.environ['wsgi.websocket']
         logging.debug("     ***** api_websocket() - has ws")
         while True:
-            logging.info("     ***** api_websocket() - while true")
+            logging.debug("     ***** api_websocket() - while true")
             try:
                 message = ws.receive()
                 logging.debug("api_websocket - message: %s", message)
