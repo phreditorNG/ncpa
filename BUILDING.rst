@@ -43,7 +43,7 @@ Install Prerequisites
   1. Download and run the installer. (`see prerequisites <https://github.com/NagiosEnterprises/ncpa/blob/master/BUILDING.rst#prerequisites>`_)
 
 * pip
-  
+
   * Pip is installed by default but should be updated before continuing::
 
       py -m pip install --upgrade pip
@@ -54,7 +54,7 @@ Install the Last Modules
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Install the full list of python modules
-	
+
   py -m pip install --upgrade -r build/resources/require.win.txt
 
 Build NCPA

@@ -61,12 +61,12 @@ if __SYSTEM__ == 'nt':
                      ('../build/resources/nagios_installer_logo.bmp'    , 'build_resources/nagios_installer_logo.bmp'),
                      ('../build/resources/ncpa.nsi'                     , 'build_resources/ncpa.nsi'),
                      (sys.executable                                    , 'python.exe')]
-    
+
     # include pywin32 modules
     packages += ['win32serviceutil', 'win32service', 'win32event', 'servicemanager', 'win32timezone']
 
     ### build as a windows executable -- NSIS will install it as a service
-    binary = Executable(script='ncpa.py', 
+    binary = Executable(script='ncpa.py',
                         icon='../build/resources/ncpa.ico')
 #
 

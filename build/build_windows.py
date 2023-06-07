@@ -44,8 +44,8 @@ except:
 
 # Building nightly versions requires a git pull and pip upgrade
 if buildtype == 'nightly':
-	# subprocess.Popen(['git', 'pull']).wait()
-	subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', '-r', os.path.join(basedir, 'build', 'resources', 'require.win.txt')]).wait()
+    # subprocess.Popen(['git', 'pull']).wait()
+    subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', '-r', os.path.join(basedir, 'build', 'resources', 'require.win.txt')]).wait()
 
 # Remove old build
 subprocess.Popen(['rmdir', os.path.join(basedir, 'agent', 'build'), '/s', '/q'], shell=True).wait()
@@ -64,7 +64,7 @@ if not os.path.exists('build'):
 sys.path.append(os.getcwd())
 
 # --------------------------
-# build with cx_Freeze 
+# build with cx_Freeze
 # --------------------------
 
 subprocess.Popen([python_launcher, 'setup.py', 'build_exe']).wait()
@@ -76,10 +76,10 @@ subprocess.Popen([python_launcher, 'setup.py', 'build_exe']).wait()
 environ = os.environ.copy()
 environ['NCPA_BUILD_VER'] = version
 if not version[-1].isdigit():
-	x = version.rsplit('.', 1)
-	environ['NCPA_BUILD_VER_CLEAN'] = x[0]
+    x = version.rsplit('.', 1)
+    environ['NCPA_BUILD_VER_CLEAN'] = x[0]
 else:
-	environ['NCPA_BUILD_VER_CLEAN'] = version
+    environ['NCPA_BUILD_VER_CLEAN'] = version
 shutil.copy(nsi_store, nsi)
 b = subprocess.Popen([nsis, nsi], env=environ)
 b.wait()
