@@ -14,7 +14,6 @@ class Handler(passive.nagioshandler.NagiosHandler):
     def __init__(self, config, *args, **kwargs):
         super(Handler, self).__init__(config, *args, **kwargs)
         listener.server.listener.config['iconfig'] = config
-        self.logging = logger.getLogger("passive")
 
     @staticmethod
     def make_tag(tag_name, text='', tag_attr=None):

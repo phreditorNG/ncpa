@@ -26,7 +26,6 @@ class NCPACheck(object):
     """
 
     def __init__(self, config, instruction, hostname, servicename, duration):
-        self.logging = logger.getLogger("passive")
         logger.debug('Initializing NCPA check with %s', instruction)
         self.config = config
         self.hostname = hostname
