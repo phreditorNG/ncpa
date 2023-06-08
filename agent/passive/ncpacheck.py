@@ -6,6 +6,7 @@ import hashlib
 import listener.server
 import listener.database as database
 
+logger = logging.getLogger("passive")
 
 # Constants to keep track of the passive check runs
 NEXT_RUN = { }
@@ -25,7 +26,8 @@ class NCPACheck(object):
     """
 
     def __init__(self, config, instruction, hostname, servicename, duration):
-        logging.debug('Initializing NCPA check with %s', instruction)
+        self.logging = logger.getLogger("passive")
+        logger.debug('Initializing NCPA check with %s', instruction)
         self.config = config
         self.hostname = hostname
         self.servicename = servicename
@@ -49,7 +51,7 @@ class NCPACheck(object):
                  information from the local agent and its args
         :rtype:  tuple
         """
-        logging.debug('Getting API url for instruction %s', instruction)
+        logger.debug('Getting API url for instruction %s', instruction)
 
         if '?' in instruction or '&' in instruction:
             api_url, api_args = NCPACheck.parse_api_url_style_instruction(instruction)
@@ -60,7 +62,7 @@ class NCPACheck(object):
 
         api_url = NCPACheck.normalize_api_url(api_url)
 
-        logging.debug('Determined instruction to be: %s', instruction)
+        logger.debug('Determined instruction to be: %s', instruction)
         return api_url, api_args
 
     def run(self, default_duration=300):
@@ -74,7 +76,7 @@ class NCPACheck(object):
                 not a string
         :raises: ValueError
         """
-        logging.info("Running check: %s", self.instruction)
+        logger.info("Running check: %s", self.instruction)
         api_url, api_args = self.get_api_url_from_instruction(self.instruction)
 
         response = self.run_check(api_url, api_args)
@@ -115,7 +117,7 @@ class NCPACheck(object):
         query = urllib.parse.urlencode(api_args)
         complete_api_url = "{}?{}".format(api_url, query)
 
-        logging.debug("Access the API with %s", complete_api_url)
+        logger.debug("Access the API with %s", complete_api_url)
 
         listener.server.__INTERNAL__ = True
         listener.server.listener.config['iconfig'] = self.config
@@ -136,7 +138,7 @@ class NCPACheck(object):
         key = hashlib.sha256((self.hostname + self.servicename).encode('utf-8')).hexdigest()
         nrun = NEXT_RUN[key]
 
-        logging.debug('Next run set to be at %s', nrun)
+        logger.debug('Next run set to be at %s', nrun)
         if nrun <= time.time():
             return True
         return False
@@ -148,7 +150,7 @@ class NCPACheck(object):
         key = hashlib.sha256((self.hostname + self.servicename).encode('utf-8')).hexdigest()
 
         NEXT_RUN[key] = run_time + self.duration
-        logging.debug('Next run is %s', NEXT_RUN[key])
+        logger.debug('Next run is %s', NEXT_RUN[key])
         return
 
     @staticmethod
@@ -161,7 +163,7 @@ class NCPACheck(object):
         :param response: The JSON response from the local agent.
         :type response: unicode
         """
-        logging.debug("Handling JSON response: %s", response)
+        logger.debug("Handling JSON response: %s", response)
         stdout, returncode = None, None
 
         try:
@@ -169,11 +171,11 @@ class NCPACheck(object):
             stdout = response_dict['stdout']
             returncode = response_dict['returncode']
         except ValueError as exc:
-            logging.error("Error with JSON: %s. JSON was: %s", str(exc), response)
+            logger.error("Error with JSON: %s. JSON was: %s", str(exc), response)
         except TypeError as exc:
-            logging.error("Error response was not a string: %s", str(exc))
+            logger.error("Error response was not a string: %s", str(exc))
 
-        logging.debug("JSON response handled found stdout='%s', returncode=%s",
+        logger.debug("JSON response handled found stdout='%s', returncode=%s",
                       stdout, returncode)
 
         return stdout, returncode
@@ -194,7 +196,7 @@ class NCPACheck(object):
                  arguments
         :rtype: tuple
         """
-        logging.debug("Parsing command line style instruction: %s",
+        logger.debug("Parsing command line style instruction: %s",
                       instruction)
         stripped_instruction = instruction.strip().split(' ')
 
@@ -216,7 +218,7 @@ class NCPACheck(object):
                     arg_name = argument
                     arg_value = arguments.pop(0)
                 except IndexError:
-                    logging.warning("Unable to parse all arguments from "
+                    logger.warning("Unable to parse all arguments from "
                                     "instruction. Mis-paired option: %s",
                                     argument)
                     break

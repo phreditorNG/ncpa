@@ -5,6 +5,7 @@ import passive.nagioshandler
 import listener.server
 import json
 
+logger = logging.getLogger("passive")
 
 class KafkaTopicItem:
     def __init__(self):
@@ -32,7 +33,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
     def do_check(check):
         stdout, returncode = check.run()
         if stdout is None or returncode is None:
-            logging.error("Error running check for %s|%s given the instruction: %s, skipping.",
+            logger.error("Error running check for %s|%s given the instruction: %s, skipping.",
                           check.hostname,
                           check.servicename,
                           check.instruction)
@@ -74,7 +75,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         """
         Send checkresults to Kafka Topic
         """
-        logging.debug("Establishing passive handler: Kafka")
+        logger.debug("Establishing passive handler: Kafka")
         super(Handler, self).run()
         itemlist = []
         for check in self.checks:
@@ -86,14 +87,18 @@ class Handler(passive.nagioshandler.NagiosHandler):
                 itemlist.append(item)
 
         if len(itemlist) > 0:
+            producer = None
             try:
-                logging.info('Connect to Kafka Server')
+                logger.info('Connect to Kafka Server')
                 producer = KafkaProducer(bootstrap_servers=['{}'.format(self.str_kafakhosts)], client_id=self.str_client_id)
             except KafkaError:
-                logging.warn(
+                logger.warn(
                     'Problem to connect Kafka Server: {} with Topic: {} and Clientname {} '.format(self.str_kafakhosts,
                                                                                                    self.str_topic,
                                                                                                    self.str_client_id))
+            if producer is None:
+                logger.info('No connection to Kafka Server')
+                return False
             for item in itemlist:
                 producer.send(self.str_topic, key=str(item.hostname), value=json.dumps(self.format_for_kafka(self, item)))
 

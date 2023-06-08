@@ -4,6 +4,7 @@ import passive.utils
 import passive.nagioshandler
 import listener.server
 
+logger = logging.getLogger("passive")
 
 class Handler(passive.nagioshandler.NagiosHandler):
     """
@@ -13,6 +14,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
     def __init__(self, config, *args, **kwargs):
         super(Handler, self).__init__(config, *args, **kwargs)
         listener.server.listener.config['iconfig'] = config
+        self.logging = logger.getLogger("passive")
 
     @staticmethod
     def make_tag(tag_name, text='', tag_attr=None):
@@ -54,7 +56,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         stdout, returncode = check.run()
 
         if stdout is None or returncode is None:
-            logging.error("Error running check for %s|%s given the instruction: %s, skipping.",
+            logger.error("Error running check for %s|%s given the instruction: %s, skipping.",
                           check.hostname,
                           check.servicename,
                           check.instruction)
@@ -106,8 +108,11 @@ class Handler(passive.nagioshandler.NagiosHandler):
         :return: 0 on success, 1 on error
         :rtype : int
         """
-        logging.debug("Establishing passive handler: NRDP")
+        logger.debug("Establishing passive handler: NRDP")
         super(Handler, self).run()
+
+        logger.info("Running NRDP handler.")
+        logger.info("checks: %s", self.checks)
 
         doc = xml.dom.minidom.Document()
         doc = Handler.get_xml_of_checkresults(doc, self.checks, run_time)
@@ -115,7 +120,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         # Verify there are any checks to send
         checks = doc.getElementsByTagName('checkresult')
         if len(checks) == 0:
-            logging.debug("No NRDP checks. Skipping NRDP send.")
+            logger.debug("No NRDP checks. Skipping NRDP send.")
             return
 
         checkresults = doc.toxml()
@@ -126,7 +131,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
             hostname = self.config.get('nrdp', 'hostname')
             assert hostname
         except Exception:
-            logging.debug("No hostname given in the config, falling back to parent class.")
+            logger.debug("No hostname given in the config, falling back to parent class.")
             hostname = super(Handler, self).guess_hostname()
         return hostname
 
@@ -145,17 +150,17 @@ class Handler(passive.nagioshandler.NagiosHandler):
         try:
             message = tree.getElementsByTagName("message")[0].firstChild.nodeValue
         except IndexError:
-            logging.warning('XML returned did not contain a message, or was malformed.')
+            logger.warning('XML returned did not contain a message, or was malformed.')
             message = 'Nonexistent'
 
         try:
             meta = tree.getElementsByTagName("output")[0].firstChild.nodeValue
         except IndexError:
-            logging.warning('XML returned did not contain a message, or was malformed.')
+            logger.warning('XML returned did not contain a message, or was malformed.')
             meta = 'Nonexistent'
 
-        logging.info('Message from NRDP server (%s): %s', server, message)
-        logging.info('Meta output from NRDP server (%s): %s', server, meta)
+        logger.info('Message from NRDP server (%s): %s', server, message)
+        logger.info('Meta output from NRDP server (%s): %s', server, meta)
 
     def submit_to_nagios(self, checkresults):
         """
@@ -169,7 +174,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
             server = self.config.get('nrdp', 'parent')
             token = self.config.get('nrdp', 'token')
         except Exception as ex:
-            logging.exception(ex)
+            logger.exception(ex)
 
         # Get the connection_timeout value
         try:
@@ -195,12 +200,12 @@ class Handler(passive.nagioshandler.NagiosHandler):
             if not server.endswith('/'):
                 server += '/'
 
-            logging.debug('XML to be submitted: %s', checkresults)
+            logger.debug('XML to be submitted: %s', checkresults)
             ret_xml = passive.utils.send_request(url=server, connection_timeout=timeout, token=token, XMLDATA=checkresults, cmd='submitcheck')
 
             if ret_xml is not None:
                 try:
                     Handler.log_result(server, ret_xml)
                 except Exception as ex:
-                    logging.debug(ret_xml)
-                    logging.exception(ex)
+                    logger.debug(ret_xml)
+                    logger.exception(ex)

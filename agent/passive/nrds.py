@@ -8,6 +8,7 @@ import logging
 import os
 import configparser as cp
 
+logger = logging.getLogger('passive')
 
 class Handler(passive.nagioshandler.NagiosHandler):
     """
@@ -18,38 +19,38 @@ class Handler(passive.nagioshandler.NagiosHandler):
         super(Handler, self).__init__(config)
 
     def run(self, *args, **kwargs):
-        logging.debug('Establishing passive handler: NRDS')
+        logger.debug('Establishing passive handler: NRDS')
 
         # The NRDS section does not exist right now..
         return
-        
+
         try:
             nrds_url = self.config.get('nrds', 'url')
             nrds_config = self.config.get('nrds', 'config_name')
             nrds_config_version = self.config.get('nrds', 'config_version')
             nrds_token = self.config.get('nrds', 'token')
         except (cp.NoOptionError, cp.NoSectionError) as exc:
-            logging.error("Encountered error while getting NRDS config values: %r", exc)
+            logger.error("Encountered error while getting NRDS config values: %r", exc)
 
         # Make sure valid input was stated in the config, if not, error out and log it.
         for directive in [nrds_url, nrds_config, nrds_config_version, nrds_token]:
             if directive is None:
-                logging.error("Cannot start NRDS transaction: %r is invalid or missing.", directive)
+                logger.error("Cannot start NRDS transaction: %r is invalid or missing.", directive)
                 return
 
         # Check to see if an update is required.
         if self.config_update_is_required(nrds_url, nrds_token, nrds_config, nrds_config_version):
-            logging.debug('Updating my NRDS config...')
+            logger.debug('Updating my NRDS config...')
             self.update_config(nrds_url, nrds_token, nrds_config)
 
         # Then install any necessary plugins if need be.
         needed_plugins = self.list_missing_plugins()
         if needed_plugins:
-            logging.debug('We need some plugins. Getting them...')
+            logger.debug('We need some plugins. Getting them...')
             for plugin in needed_plugins:
                 self.get_plugin(plugin)
 
-        logging.debug('Done with this NRDS iteration.')
+        logger.debug('Done with this NRDS iteration.')
 
     @staticmethod
     def get_plugin(nrds_url, nrds_token, nrds_os, plugin_path, plugin):
@@ -67,7 +68,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         if plugin_abs_path != os.path.abspath(plugin_abs_path):
             raise ValueError("Plugin path (%s) is not absolute, I will not continue safely.", plugin_abs_path)
 
-        logging.debug("Downloading plugin to location: %s", plugin_abs_path)
+        logger.debug("Downloading plugin to location: %s", plugin_abs_path)
 
         try:
             with open(plugin_abs_path, 'w') as plugin_file:
@@ -75,7 +76,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
                 if os.name != 'nt':
                     os.chmod(plugin_abs_path, 775)
         except Exception as exc:
-            logging.error('Could not write the plugin to %s: %r', plugin_abs_path, exc)
+            logger.error('Could not write the plugin to %s: %r', plugin_abs_path, exc)
 
     def update_config(self, nrds_url, nrds_token, nrds_config):
         """
@@ -103,7 +104,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
                 if not test_config.sections():
                     raise Exception('Config contained no NCPA directives, not writing.')
         except Exception as exc:
-            logging.error("NRDS config received from the server contained errors: %r", exc)
+            logger.error("NRDS config received from the server contained errors: %r", exc)
             return False
 
         if nrds_response:
@@ -111,10 +112,10 @@ class Handler(passive.nagioshandler.NagiosHandler):
                 with open(self.config.file_path, 'w') as new_config:
                     new_config.write(nrds_response)
             except Exception as exc:
-                logging.error('Could not rewrite the config: %r', exc)
+                logger.error('Could not rewrite the config: %r', exc)
                 return False
             else:
-                logging.info('Successfully updated NRDS config.')
+                logger.info('Successfully updated NRDS config.')
         return True
 
 
@@ -134,7 +135,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
             'version': nrds_config_version
         }
 
-        logging.debug('Connecting to NRDS server (%s)...', nrds_url)
+        logger.debug('Connecting to NRDS server (%s)...', nrds_url)
 
         url_request = passive.utils.send_request(nrds_url, **get_args)
 
@@ -142,7 +143,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         status_xml = response_xml.findall('./status')
 
         if not status_xml:
-            logging.warning("NRDS server did not respond with a status, skipping.")
+            logger.warning("NRDS server did not respond with a status, skipping.")
             return False
 
         status = status_xml[0].text
@@ -151,7 +152,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         elif status == "1":
             return True
         else:
-            logging.warning("Server does not have a record for %s config.", nrds_config)
+            logger.warning("Server does not have a record for %s config.", nrds_config)
             return False
 
     @staticmethod
@@ -216,7 +217,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
         :return: Set containing all the plugins that already exist in the plugins/ directory.
         :rtype: set
         """
-        logging.debug("Checking for installed plugins.")
+        logger.debug("Checking for installed plugins.")
         plugin_path = self.config.get('plugin directives', 'plugin_path')
         plugins = set()
 
@@ -225,7 +226,7 @@ class Handler(passive.nagioshandler.NagiosHandler):
                 if not plugin.startswith('.'):
                     plugins.add(plugin)
         except Exception as exc:
-            logging.error("Encountered exception while trying to read plugin directory: %r", exc)
+            logger.error("Encountered exception while trying to read plugin directory: %r", exc)
 
         return plugins
 

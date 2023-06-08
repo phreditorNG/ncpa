@@ -2,6 +2,7 @@ import logging
 import platform
 import passive.ncpacheck
 
+logger = logging.getLogger('passive')
 
 class NagiosHandler(object):
     """
@@ -30,7 +31,7 @@ class NagiosHandler(object):
         :rtype: dict
         """
 
-        logging.debug('Parsing config for passive commands...')
+        logger.debug('Parsing config for passive commands...')
         commands = [x for x in self.config.items('passive checks') if x[0] not in self.config.defaults()]
         ncpa_commands = []
 
@@ -51,7 +52,7 @@ class NagiosHandler(object):
                 if hostname.upper() == '%HOSTNAME%':
                     hostname = self.guess_hostname()
             except ValueError:
-                logging.error("Cannot parse passive directive for %s, name malformed, skipping.", name_blob)
+                logger.error("Cannot parse passive directive for %s, name malformed, skipping.", name_blob)
                 continue
             ncpa_commands.append(passive.ncpacheck.NCPACheck(self.config, instruction, hostname, servicename, duration))
 
@@ -65,7 +66,7 @@ class NagiosHandler(object):
         :rtype: unicode
         """
         hostname = platform.node()
-        logging.debug('Using the platform node name: %s' % hostname)
+        logger.debug('Using the platform node name: %s' % hostname)
         return hostname
 
     def run(self, *args, **kwargs):
