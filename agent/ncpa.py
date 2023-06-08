@@ -405,7 +405,7 @@ class Daemon():
         else:
             raise ValueError(action)
 
-    def setup_root(self):
+    def root_setup_tasks(self):
         """Override to perform setup tasks with root privileges.
 
         When this is called, logging has been initialized, but the
@@ -426,7 +426,7 @@ class Daemon():
             self.logger.exception(e)
             pass
 
-    def setup_user(self):
+    def user_setup_tasks(self):
         pass
 
     # This (ongoing NCPA) process is normally terminated by a different instance of this code launched with the '--stop' option.
@@ -459,22 +459,14 @@ class Daemon():
         self.prepare_dirs()
 
         try:
-            # setup_logger must come after check_pid so that two
-            # processes don't write to the same log file, but before
-            # setup_root so that work done with root privileges can be
-            # logged.
-
-            if not self.options['passive_only'] or self.options['listener_only']:
-                setup_logger(self.config, listener_logger, '')
-
-            passive_logger = ''
-            if not self.options['listener_only'] or self.options['passive_only']:
-                passive_logger = logging.getLogger('passive')
-                passive_logger.propagate = False
-                setup_logger(self.config, passive_logger, self.passive_logfile)
+            # Chown the installed passive log file while root still has control
+            # Since the listner file is used for the root and parent loggers, it is chowned
+            # during the setup_logger process
+            if __SYSTEM__ == 'posix':
+                chown(self.config.get('general', 'uid'), self.config.get('general', 'gid'), self.passive_logfile)
 
             # Setup with root privileges
-            self.setup_root()
+            self.root_setup_tasks()
 
             # Drop permissions to specified user/group in ncpa.cfg
             self.set_uid_gid()
@@ -485,7 +477,7 @@ class Daemon():
 
             # Set up with user before daemonizing, so that startup failures
             # can appear on the console
-            self.setup_user()
+            self.user_setup_tasks()
 
             # Daemonize
             if not self.options['non_daemon']:
@@ -907,8 +899,6 @@ def setup_logger(config, loggerinstance, logfile):
     loglevel = config.get('general', 'loglevel')
     logmaxmb = config.getint('general', 'logmaxmb')
     logbackups = config.getint('general', 'logbackups')
-    uid = config.get('general', 'uid')
-    gid = config.get('general', 'gid')
 
     try:
         level = int(loglevel)
@@ -924,7 +914,7 @@ def setup_logger(config, loggerinstance, logfile):
             handlers.append(RotatingFileHandler(logfile, maxBytes=max_log_size_bytes, backupCount=logbackups))
 
         if __SYSTEM__ == 'posix':
-            chown(uid, gid, logfile)
+            chown(config.get('general', 'uid'), config.get('general', 'gid'), logfile)
 
     handlers.append(logging.StreamHandler())
     loggerinstance.setLevel(level)
