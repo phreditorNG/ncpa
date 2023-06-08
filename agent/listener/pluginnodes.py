@@ -1,6 +1,5 @@
 import os
 import time
-import logging
 from configparser import ConfigParser
 import subprocess
 import shlex
@@ -13,6 +12,9 @@ import listener.environment as environment
 import listener.server as server
 import signal
 from threading import Timer
+import logging
+
+logger = logging.getLogger("listener")
 
 
 # Windows does not have the pwd and grp module and does not need it since only Unix
@@ -104,7 +106,7 @@ class PluginNode(nodes.RunnableNode):
 
         # Make our command line
         cmd = self.get_cmdline(instructions, sudo_plugins)
-        logging.debug("Running process with command line: `%s`", " ".join(cmd))
+        logger.debug("Running process with command line: `%s`", " ".join(cmd))
 
         # Run the command in a new subprocess
         run_time_start = time.time()
@@ -139,7 +141,7 @@ class PluginNode(nodes.RunnableNode):
                 " ".join(cmd), timeout
             )
             returncode = -1
-            logging.error(stdout)
+            logger.error(stdout)
 
         cleaned_stdout = str(
             "".join(stdout.decode("utf-8", "ignore"))
@@ -233,8 +235,8 @@ class PluginAgentNode(nodes.ParentNode):
                     if os.path.isfile(plugin_abs_path):
                         self.children[plugin] = PluginNode(plugin, plugin_abs_path)
         except OSError as exc:
-            logging.warning("Unable to access directory %s", plugin_path)
-            logging.warning(
+            logger.warning("Unable to access directory %s", plugin_path)
+            logger.warning(
                 "Unable to assemble plugins. Does the directory exist? - %r", exc
             )
 

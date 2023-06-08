@@ -46,7 +46,6 @@ adaptation of the input Logged After specification.
 
 """
 
-import logging
 import datetime
 import win32evtlog
 import re
@@ -57,7 +56,9 @@ import listener.database as database
 import listener.server
 import time
 import platform
+import logging
 
+logger = logging.getLogger('listener')
 
 class WindowsLogsNode(listener.nodes.LazyNode):
 
@@ -87,7 +88,7 @@ class WindowsLogsNode(listener.nodes.LazyNode):
             except pywintypes.error as exc:
                 raise Exception('Windows error occurred while getting log %s: %r' % (logtype, exc.strerror))
             except BaseException as exc:
-                logging.exception(exc)
+                logger.exception(exc)
                 raise Exception('General error occurred while getting log %s: %r' % (logtype, exc))
 
         # If the logs are empty, and we had no name selected, give a good
@@ -314,7 +315,7 @@ def get_datetime_from_date_input(date_input):
         offset = abs(int(offset))
         t_delta = get_timedelta(offset, time_frame)
     except (IndexError, TypeError) as exc:
-        logging.error('Date input was invalid, Given: %r, %r', date_input, exc)
+        logger.error('Date input was invalid, Given: %r, %r', date_input, exc)
         t_delta = datetime.timedelta(days=1)
     return t_delta
 
@@ -397,7 +398,7 @@ def parseEvt(result,event):
                     # Can't reproduce when running manually, so it seems more a subprocess.Popen()
                     # than ours:
                     row['Message']=''
-                    logging.error(" Failed to decode:", repr(message))
+                    logger.error(" Failed to decode:", repr(message))
             try:
                 taskCategory = win32evtlog.EvtFormatMessage(
                     metadata, event, win32evtlog.EvtFormatMessageTask
@@ -410,7 +411,7 @@ def parseEvt(result,event):
                     row['EventCategory']=str(taskCategory)
                 except UnicodeEncodeError:
                     row['EventCategory']=str(task_value)
-                    logging.error(" Failed to decode:", repr(taskCategory))
+                    logger.error(" Failed to decode:", repr(taskCategory))
 
     return row
 

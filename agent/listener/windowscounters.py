@@ -7,6 +7,8 @@ import logging
 import copy
 import re
 
+logger = logging.getLogger("listener")
+
 class WindowsCountersNode(listener.nodes.LazyNode):
 
     def accessor(self, path, config, full_path, args):
@@ -46,22 +48,22 @@ class WindowsCountersNode(listener.nodes.LazyNode):
         except Exception as exc:
             error = self.handle_error(exc, self.name)
             return { 'stdout': error, 'returncode': 3 }
-            
+
     # For certain errors, we should add more info
     def handle_error(self, exc, name):
         error = exc.strerror
 
         if 'No data' in error:
             error = error + ' Does the counter (' + name  + ') exist?'
-            logging.debug(exc)
+            logger.debug(exc)
         elif 'not valid' in error:
             error = error + ' You may need to add the sleep=1 parameter.'
-            logging.debug(exc)
+            logger.debug(exc)
         elif 'negative value' in error:
             error = error + ' You may need to add the format=1 parameter.'
-            logging.debug(exc)
+            logger.debug(exc)
         else:
-            logging.exception(exc)
+            logger.exception(exc)
 
         return error
 
@@ -134,7 +136,7 @@ class WindowsCountersNode(listener.nodes.LazyNode):
         #                           $  -- Last character matched must be end of string
         # End result after split() is length-5 array. indices 1-3 refer to the capture groups
         wpc_regex = r'^([^(/]*)\(?(.*?)\)?/(.*)$'
-        match_list = re.split(wpc_regex, wpc_string) 
+        match_list = re.split(wpc_regex, wpc_string)
         counter_path = '\\'
         if match_list[2]:
             counter_path += match_list[1] + '(' + match_list[2] + ')\\' + match_list[3]

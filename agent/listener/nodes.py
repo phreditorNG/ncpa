@@ -2,12 +2,14 @@ import os
 import tempfile
 import time
 import itertools
-import logging
 import pickle
 import copy
 import re
 import listener.server
 import listener.database as database
+import logging
+
+logger = logging.getLogger('listener')
 
 
 # Valid nodes is updated as it gets set when calling a node via accessor
@@ -61,7 +63,7 @@ class ParentNode(object):
                     kwargs["first"] = False
                 stat.update(child.walk(*args, **kwargs))
             except Exception as exc:
-                logging.exception(exc)
+                logger.exception(exc)
                 stat.update({name: "Error retrieving child: %r" % str(exc)})
         return {self.name: stat}
 
@@ -246,7 +248,7 @@ class RunnableNode(ParentNode):
             # file having been created yet (check doesn't have old data)
             if values is False:
                 time.sleep(1)
-                logging.debug("Re-running check for 1 second of data.")
+                logger.debug("Re-running check for 1 second of data.")
                 try:
                     values, unit = self.method(*args, **kwargs)
                 except TypeError:
@@ -316,7 +318,7 @@ class RunnableNode(ParentNode):
             values = self.get_delta_values(values, kwargs)
             values = self.get_aggregated_values(values, kwargs)
         except TypeError:
-            logging.warning(
+            logger.warning(
                 "Error converting values to scale and delta. Values: %r" % values
             )
 
@@ -373,7 +375,7 @@ class RunnableNode(ParentNode):
         except Exception as exc:
             returncode = 3
             stdout = str(exc)
-            logging.exception(exc)
+            logger.exception(exc)
 
         # Get the check logging value
         try:
@@ -431,7 +433,7 @@ class RunnableNode(ParentNode):
                 else:
                     nice_values.append("%0.2f %s" % (x, self.unit))
             except TypeError:
-                logging.info(
+                logger.info(
                     "Did not receive normal values. Unable to find meaningful check."
                 )
                 return 0, "OK: %s was %s" % (proper_name, str(values)), ""
@@ -530,16 +532,16 @@ class RunnableNode(ParentNode):
                 last_modified = os.path.getmtime(tmpfile)
         except (IOError, EOFError):
             # Otherwise load the loaded_values and last_modified with values that will cause zeros to show up.
-            logging.debug('No pickle file found for hash_val "%s"', hash_val)
+            logger.debug('No pickle file found for hash_val "%s"', hash_val)
             loaded_values = values
             last_modified = 0
         except (KeyError, pickle.UnpicklingError):
-            logging.error('Problem unpickling data for hash_val "%s"', hash_val)
+            logger.error('Problem unpickling data for hash_val "%s"', hash_val)
             loaded_values = values
             last_modified = 0
 
         # Update the pickled data
-        logging.debug(
+        logger.debug(
             'Updating pickle for hash_val "%s". Filename is %s.', hash_val, tmpfile
         )
         with open(tmpfile, "wb") as values_file:

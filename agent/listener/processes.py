@@ -1,10 +1,12 @@
 import psutil
 import listener.nodes as nodes
-import logging
 import re
 import platform
 import tempfile
 import subprocess
+import logging
+
+logger = logging.getLogger("listener")
 
 
 class ProcessNode(nodes.LazyNode):
@@ -326,7 +328,7 @@ class ProcessNode(nodes.LazyNode):
                     processes.append(proc_obj)
             except Exception as e:
                 # Could not access process, most likely because of windows permissions
-                logging.exception(e)
+                logger.exception(e)
                 continue
 
         return processes

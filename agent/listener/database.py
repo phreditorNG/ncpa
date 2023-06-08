@@ -5,6 +5,8 @@ import sys
 import listener.server
 import logging
 
+logger = logging.getLogger('listener')
+
 # A module to wrap sqlite3 for use with a small database to store things
 # like checks across both passive and active sections
 
@@ -36,7 +38,7 @@ class DB(object):
 
     # This is called on both passive and listener startup
     def setup(self):
-        
+
         # Create main check results database and migration database
         self.cursor.execute('CREATE TABLE IF NOT EXISTS checks (accessor, run_time_start, run_time_end, result, output, sender, type)')
         self.cursor.execute('CREATE TABLE IF NOT EXISTS migrations (id, version)')
@@ -46,14 +48,14 @@ class DB(object):
 
     def run_db_maintenance(self, config):
         try:
-            days = config.getint('general', 'check_logging_time')
+            days = config.getint('general', 'check_logger.time')
         except Exception as e:
             days = 30;
         timestamp = time.time() - (days * 86400)
         try:
             self.cursor.execute('DELETE FROM checks WHERE run_time_start < %d' % timestamp)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     # Function that will run migrations in future versions if there needs to be some
     # changes to the database layout
@@ -66,7 +68,7 @@ class DB(object):
         try:
             self.cursor.execute('INSERT INTO checks VALUES (?, ?, ?, ?, ?, ?, ?)', data)
         except Exception as ex:
-            logging.exception(ex)
+            logger.exception(ex)
 
     # Returns the total amount of checks in the DB
     def get_checks_count(self, search='', status='', senders=[]):

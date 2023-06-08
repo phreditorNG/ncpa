@@ -1,6 +1,5 @@
 import psutil as ps
 import os
-import logging
 import time
 import re
 import platform
@@ -11,6 +10,9 @@ import listener.processes as processes
 import ncpa
 import listener.environment as environment
 import math
+import logging
+
+logger = logging.getLogger("listener")
 
 importables = ("windowscounters", "windowslogs")
 
@@ -116,7 +118,7 @@ def make_mountpoint_nodes(partition_name):
         except OSError as ex:
             # Log this error as debug only, normally means could not count inodes because
             # of some permissions or access related issues
-            logging.exception(ex)
+            logger.exception(ex)
 
     # Make and return the full parent node
     return RunnableParentNode(
@@ -289,7 +291,7 @@ def get_disk_node(config):
             make_disk_nodes(x) for x in list(ps.disk_io_counters(perdisk=True).keys())
         ]
     except IOError as ex:
-        logging.exception(ex)
+        logger.exception(ex)
         disk_counters = []
 
     # Get exclude values from the config
@@ -325,12 +327,12 @@ def get_disk_node(config):
                         tmp = make_mountpoint_nodes(x)
                         disk_mountpoints.append(tmp)
                     except OSError as ex:
-                        logging.exception(ex)
+                        logger.exception(ex)
                 else:
                     tmp = make_mount_other_nodes(x)
                     disk_parts.append(tmp)
     except IOError as ex:
-        logging.exception(ex)
+        logger.exception(ex)
 
     disk_logical = ParentNode("logical", children=disk_mountpoints)
     disk_physical = ParentNode("physical", children=disk_counters)
@@ -369,55 +371,55 @@ def get_root_node(config):
         cpu = get_cpu_node()
     except Exception as e:
         cpu = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         memory = get_memory_node()
     except Exception as e:
         memory = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         disk = get_disk_node(config)
     except Exception as e:
         disk = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         interface = get_interface_node()
     except Exception as e:
         interface = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         plugins = get_plugins_node()
     except Exception as e:
         plugins = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         user = get_user_node()
     except Exception as e:
         user = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         system = get_system_node()
     except Exception as e:
         system = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         service = services.get_node()
     except Exception as e:
         service = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     try:
         process = processes.get_node()
     except Exception as e:
         process = ParentNode("N/A")
-        logging.exception(e)
+        logger.exception(e)
 
     children = [cpu, memory, disk, interface, plugins, user, system, service, process]
 
@@ -432,13 +434,13 @@ def get_root_node(config):
                     node = get_node()
                 except Exception as e:
                     node = ParentNode("N/A")
-                    logging.exception(e)
+                    logger.exception(e)
                 children.append(node)
-                logging.debug("Imported %s into the API tree.", importable)
+                logger.debug("Imported %s into the API tree.", importable)
             except ImportError:
-                logging.warning("Could not import %s, skipping.", importable)
+                logger.warning("Could not import %s, skipping.", importable)
             except AttributeError:
-                logging.warning(
+                logger.warning(
                     "Trying to import %s but does not get_node() function, skipping.",
                     importable,
                 )
