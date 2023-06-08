@@ -920,7 +920,40 @@ def setup_logger(config, loggerinstance, logfile):
     loggerinstance.setLevel(level)
 
     for h in handlers:
-        h.setFormatter(logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s"))
+        """
+        Logging format:
+        %(asctime)s     - Time      - YYYY-MM-DD HH:MM:SS,uuuuuu
+        %(name)s        - Name      - Logger name
+        %(levelname)s   - Level     - DEBUG, INFO, WARNING, ERROR, CRITICAL
+        %(filename)s    - Filename  - Filename where the log message originated
+        %(message)s     - Message   - The log message
+
+        Example:
+            2016-03-15 14:37:42,000000 DEBUG    ncpa_listener.py Starting listener
+
+        Default format:
+            fmt     = '%(asctime)s %(name)s %(levelname)s %(filename)s %(message)s'
+            datefmt = '%Y-%m-%d %H:%M:%S'
+        """
+        # logformat = config.get('general', 'logformat')
+        # logdateformat = config.get('general', 'logdatefmt')
+        # if logformat == '':
+        #     logformat = '%(asctime)s %(levelname)6s %(filename)13s %(message)s'
+        # if logdateformat == '':
+        #     logdateformat = '%Y-%m-%d %H:%M:%S'
+        if name == 'passive':
+            if config.get('general', 'loglevel') == 'debug':
+                logformat = '%(asctime)s %(levelname)6s %(filename)13s %(message)s'
+            else:
+                logformat = '%(asctime)s %(levelname)6s %(message)s'
+        else:
+            if config.get('general', 'loglevel') == 'debug':
+                logformat = '%(asctime)s %(levelname)6s %(filename)10s %(message)s'
+            else:
+                logformat = '%(asctime)s %(levelname)6s %(message)s'
+        logdateformat = '%Y-%m-%d %H:%M:%S'
+        h.setFormatter(logging.Formatter(logformat,
+                                         datefmt=logdateformat)) # change asctime format to YYYY-MM-DD HH:MM:SS
         h.setLevel(level)
         loggerinstance.addHandler(h)
 
