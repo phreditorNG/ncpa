@@ -110,9 +110,6 @@ class Handler(passive.nagioshandler.NagiosHandler):
         logger.debug("Establishing passive handler: NRDP")
         super(Handler, self).run()
 
-        logger.info("Running NRDP handler.")
-        logger.info("checks: %s", self.checks)
-
         doc = xml.dom.minidom.Document()
         doc = Handler.get_xml_of_checkresults(doc, self.checks, run_time)
 
