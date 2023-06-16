@@ -19,7 +19,7 @@ Prerequisites
 -------------
 
 * `Git for Windows <https://git-scm.com/download/win>`_
-* `Python 3.11.x (Download <https://www.python.org/downloads/>`_)
+* `Python 3.11.x <https://www.python.org/downloads/>`_
 * `NSIS 3 <http://nsis.sourceforge.net/Download>`_ *(Requires admin rights)*
 
 Configure the Build Environment
