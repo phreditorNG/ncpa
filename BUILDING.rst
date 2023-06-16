@@ -46,7 +46,7 @@ Install Prerequisites
 Note: py should be the command to run python 3. If it is not, you may need to use the full path to the python executable.
 
 Build NCPA
-~~~~~~~~~~
+----------
 
 In your Git Bash terminal (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH), run the following commands:
 
