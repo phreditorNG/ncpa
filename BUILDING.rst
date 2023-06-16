@@ -19,12 +19,8 @@ Prerequisites
 -------------
 
 * `Git for Windows <https://git-scm.com/download/win>`_
-* \*Python 3.11.x (`Download <https://www.python.org/downloads/>`_)
-..
-  * \*OpenSSL for Windows (`Download <https://slproweb.com/products/Win32OpenSSL.html>`_) *(Requires admin rights)*!
-
+* `Python 3.11.x (Download <https://www.python.org/downloads/>`_)
 * `NSIS 3 <http://nsis.sourceforge.net/Download>`_ *(Requires admin rights)*
-\* : Use 32-bit versions if you will deploy to 32-bit systems
 
 Configure the Build Environment
 -------------------------------
@@ -36,12 +32,6 @@ Install Prerequisites
 
   1. Download and install Python 3.x. (`see prerequisites <#prerequisites>`_)
   2. Execute the installer as usual, making sure to check the box to add Python to your PATH (on the first page).
-
-..
-  * OpenSSL
-
-    1. Download and install the OpenSSL package. (`see prerequisites <#prerequisites>`_)
-    2. Be sure to make a not of the installation directory while installing.
 
 * NSIS
 
