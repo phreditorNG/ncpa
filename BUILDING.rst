@@ -49,20 +49,14 @@ Build NCPA
 
 In your Git Bash terminal (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH), run the following commands:
 
-Navigate to your desired build directory::
+Navigate to your desired build directory and clone the repository::
 
   cd /c/desired/build/directory
-
-Clone the repository::
-
   git clone https://github.com/NagiosEnterprises/ncpa.git
 
 In a Command Prompt/Terminal (cmd.exe) with admin rights, run the following commands::
 
   cd C:\desired\build\directory\ncpa
-
-Run the build script::
-
   py build\build_windows.py
 
 This will create a file called ``ncpa-<version>.exe`` in the ``build`` directory.
