@@ -10,11 +10,6 @@ Building on Windows
 *WARNING: DO THIS ON A VM OR A NON-PRODUCTION SYSTEM.*
 *THE BUILD SCRIPT WILL MAKE CHANGES TO YOUR SYSTEM THAT MAY BREAK EXISTING SOFTWARE*
 
-*Note: The current Windows build script is written in batch and
-must be executed by cmd.exe. For this reason, any Windows commands
-listed in this document will be written with cmd.exe compatibility
-in mind.*
-
 Prerequisites
 -------------
 
