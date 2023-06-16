@@ -7,10 +7,10 @@ Building NCPA
 Building on Windows
 ===================
 
-*WARNING: DO THIS ON A VM OR A NON-PRODUCTION SYSTEM*
+*WARNING: DO THIS ON A VM OR A NON-PRODUCTION SYSTEM.*
 *THE BUILD SCRIPT WILL MAKE CHANGES TO YOUR SYSTEM THAT MAY BREAK EXISTING SOFTWARE*
 
-*Note: The current Windows pre-build script is written in batch and
+*Note: The current Windows build script is written in batch and
 must be executed by cmd.exe. For this reason, any Windows commands
 listed in this document will be written with cmd.exe compatibility
 in mind.*
@@ -45,13 +45,6 @@ Install Prerequisites
 
 Note: py should be the command to run python 3. If it is not, you may need to use the full path to the python executable.
 
-Install the Last Modules
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-* Install the full list of python modules
-
-  py -m pip install --upgrade -r build/resources/require.win.txt
-
 Build NCPA
 ~~~~~~~~~~
 
@@ -65,7 +58,7 @@ Clone the repository::
 
   git clone https://github.com/NagiosEnterprises/ncpa.git
 
-In a Command Prompt/Terminal (cmd.exe) terminal with admin rights, run the following commands::
+In a Command Prompt/Terminal (cmd.exe) with admin rights, run the following commands::
 
   cd C:\desired\build\directory\ncpa
 
