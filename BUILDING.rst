@@ -4,9 +4,9 @@ Building NCPA
 
 *This document is a work in progress for Python 3 and NCPA 3.*
 
-* Building on Windows <#building-on-windows>
-* Building on Linux <#building-on-linux>
-* Building on Mac OS X <#building-on-mac-os-x>
+* `Building on Windows <#building-on-windows>`
+* `Building on Linux <#building-on-linux>`
+* `Building on Mac OS X <#building-on-mac-os-x>`
 
 Building on Windows
 ===================
