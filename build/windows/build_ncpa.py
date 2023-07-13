@@ -1,6 +1,12 @@
 """
 Builds the Windows installer for NCPA.
 
+Called from build_windows.bat
+ -sys.argv[1] = path to python.exe to use
+"""
+""" OLD, TODO: replace
+Builds the Windows installer for NCPA.
+
 Run as Administrator on Windows
 -pip installs prereqs to the python interpreter that is running this script
 -cx_Freeze builds the executable
@@ -36,6 +42,17 @@ class ConsoleColors:
 
 console_colors = ConsoleColors()
 
+# -------------------------- TODO: remove and add to build_windows.bat
+# Build Python with OpenSSL
+# --------------------------
+
+# pythonbuildscript = os.path.join(os.path.dirname(__file__), 'windows', 'build_python.ps1')
+# process = subprocess.run(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", pythonbuildscript], capture_output=True)
+
+# if process.returncode != 0:
+#     print(f"Error building Python: {process.stderr}")
+#     sys.exit(process.returncode)
+
 # --------------------------
 # Configuration/Setup
 # --------------------------
@@ -50,7 +67,7 @@ console_colors.set_colors(0x0F) # White on Black
 print("Building NCPA for Windows")
 
 # Which python launcher command is available for Windows
-python_launcher = 'py' if shutil.which('py') else 'python'
+python_launcher = sys.argv[1] # TODO: remove this old: 'py' if shutil.which('py') else 'python'
 
 basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 nsi_store = os.path.join(basedir, 'build', 'resources', 'ncpa.nsi')
