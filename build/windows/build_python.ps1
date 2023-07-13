@@ -36,6 +36,7 @@ Param(
 
     [string]$base_dir
 )
+$cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
 
 ## legacy - now passed in as params as seen above
 #$7z_ver      = "2301-x64" # 7-Zip   - sourced from https://www.7-zip.org/a/7z$7z_ver.exe
@@ -43,7 +44,7 @@ Param(
 #$python_ver  = "3.11.3"   # Python  - sourced from https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz
 #$base_dir = "$HOME\NCPA-Building_Python"
 
-if (-not (Test-Path -Path $base_dir)){
+if (-not (Test-Path -Path $base_dir)) {
     New-Item -ItemType Directory -Path $base_dir | Out-Null
 }
 cd $base_dir
@@ -124,8 +125,9 @@ if ($build_openssl) {
 }
 
 ### 5. Build Python
-cd $base_dir
-if ($download_files -and $false){ #TODO: remove false
+# Note: $cpython_dir is $base_dir\Python-$python_ver\Python-$python_ver\
+
+if ($download_files){
     ## 5.0 Download Python
     Write-Host "Downloading Python..."
     Invoke-WebRequest -Uri https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz -OutFile $base_dir\Python-$python_ver.tgz -ErrorAction Stop
@@ -145,8 +147,6 @@ if (-not $preserve_files){
 }
 if ($LASTEXITCODE -ne 0) { Throw "Error extracting Python-$python_ver.tgz" }
 
-$cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
-
 ## 5.2 Add custom OpenSSL to the Python build
 # 5.2.0 Copy OpenSSL files from
 #   $base_url\OpenSSL
@@ -164,9 +164,20 @@ switch($cpu_arch){
 $python_ssl_pattern = "openssl-bin-*"
 $python_ssl = Get-ChildItem -Path "$cpython_dir\externals" `
     -Filter $python_ssl_pattern | Select-Object -ExpandProperty FullName
-Copy-Item -Path "$python_ssl\$cpu_arch"     -Destination "$python_ssl\$cpu_arch-backup" -Force -Recurse
-Copy-Item -Path "$base_dir\OpenSSL\include" -Destination "$python_ssl\$cpu_arch"        -Force -Recurse
 
+# Backup the existing folder
+if (Test-Path "$python_ssl\$cpu_arch") {
+    Move-Item -Path "$python_ssl\$cpu_arch" -Destination "$python_ssl\$cpu_arch-backup" -Force -Recurse
+} else {
+    Write-Host "Source folder does not exist: $python_ssl\$cpu_arch"
+}
+
+# Copy the new OpenSSL files to the Python build
+if (Test-Path "$base_dir\OpenSSL\include") {
+    Copy-Item -Path "$base_dir\OpenSSL\include" -Destination "$python_ssl\$cpu_arch" -Force -Recurse
+} else {
+    Write-Host "Destination folder does not exist: $base_dir\OpenSSL\include"
+}
 $openssl_binfiles = "libcrypto-3-x64.dll", "libcrypto-3-x64.pdb", "libssl-3-x64.dll", "libssl-3-x64.pdb"
 foreach ($binfile in $openssl_binfiles) {
     Copy-Item -Path "$base_dir\OpenSSL\bin\$binfile" -Destination "$python_ssl\$cpu_arch" -Force
@@ -176,7 +187,7 @@ foreach ($libfile in $openssl_libfiles) {
     Copy-Item -Path "$base_dir\OpenSSL\lib\$libfile" -Destination "$python_ssl\$cpu_arch" -Force
 }
 
-# 5.2.1 Rewrite PCbuild\openssl.props to use our added OpenSSL 3 files instead of the old 1.1.1
+# 5.2.1 Rewrite PCbuild\openssl.props to use our moved OpenSSL 3 files instead of the old 1.1.1
 Write-Host "Rewriting PCbuild\openssl.props"
 $openssl_props = "$cpython_dir\PCbuild\openssl.props"
 $content = Get-Content "$openssl_props" -Raw
