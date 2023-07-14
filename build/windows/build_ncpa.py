@@ -1,8 +1,10 @@
+from __future__ import print_function
 """
 Builds the Windows installer for NCPA.
 
 Called from build_windows.bat
  -sys.argv[1] = path to python.exe to use
+ -sys.argv[2] = build type (release or nightly)
 """
 """ OLD, TODO: replace
 Builds the Windows installer for NCPA.
@@ -42,17 +44,6 @@ class ConsoleColors:
 
 console_colors = ConsoleColors()
 
-# -------------------------- TODO: remove and add to build_windows.bat
-# Build Python with OpenSSL
-# --------------------------
-
-# pythonbuildscript = os.path.join(os.path.dirname(__file__), 'windows', 'build_python.ps1')
-# process = subprocess.run(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", pythonbuildscript], capture_output=True)
-
-# if process.returncode != 0:
-#     print(f"Error building Python: {process.stderr}")
-#     sys.exit(process.returncode)
-
 # --------------------------
 # Configuration/Setup
 # --------------------------
@@ -60,16 +51,22 @@ console_colors = ConsoleColors()
 # Grab command line arguments
 buildtype = 'release'
 buildtype = 'nightly'
-if len(sys.argv) > 1:
-    buildtype = sys.argv[1]
+if len(sys.argv) > 2:
+    buildtype = sys.argv[2]
 
 console_colors.set_colors(0x0F) # White on Black
 print("Building NCPA for Windows")
 
+for arg in sys.argv:
+    print("arg:", arg)
+
 # Which python launcher command is available for Windows
 python_launcher = sys.argv[1] # TODO: remove this old: 'py' if shutil.which('py') else 'python'
+print("python_launcher:", python_launcher)
 
-basedir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Set up paths
+# basedir = \ncpa\
+basedir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 nsi_store = os.path.join(basedir, 'build', 'resources', 'ncpa.nsi')
 print("nsi_store:", nsi_store)
 
@@ -88,20 +85,19 @@ except:
 
 # Building nightly versions requires a git pull and pip upgrade
 if buildtype == 'nightly':
-	# subprocess.Popen(['git', 'pull']).wait()
-	subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', '-r', os.path.join(basedir, 'build', 'resources', 'require.win.txt')]).wait()
+    print("Upgrading pip and requirements")
+    # subprocess.Popen(['git', 'pull']).wait()
+    subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', '-r', os.path.join(basedir, 'build', 'resources', 'require.win.txt')]).wait()
 
 # Remove old build
+print("Removing old build")
 subprocess.Popen(['rmdir', os.path.join(basedir, 'agent', 'build'), '/s', '/q'], shell=True).wait()
 
 os.chdir('agent')
-
 if not os.path.exists('var'):
     os.mkdir('var')
-
 if not os.path.exists('plugins'):
     os.mkdir('plugins')
-
 if not os.path.exists('build'):
     os.mkdir('build')
 
@@ -132,7 +128,7 @@ try:
     GIT_SHORT = run_cmd("git rev-parse --short HEAD")
     GIT_UNCOMMITTED = run_cmd("git status --untracked-files=no --porcelain")
 
-    print("GIT_UNCOMMITED:", GIT_UNCOMMITTED)
+    print("GIT_UNCOMMITED:\n", GIT_UNCOMMITTED)
 
     if GIT_UNCOMMITTED:
          GIT_LONG = f"{GIT_LONG}++ compiled with uncommitted changes"
@@ -160,10 +156,10 @@ console_colors.set_colors(0x0F) # White on Black
 environ = os.environ.copy()
 environ['NCPA_BUILD_VER'] = version
 if not version[-1].isdigit():
-	x = version.rsplit('.', 1)
-	environ['NCPA_BUILD_VER_CLEAN'] = x[0]
+    x = version.rsplit('.', 1)
+    environ['NCPA_BUILD_VER_CLEAN'] = x[0]
 else:
-	environ['NCPA_BUILD_VER_CLEAN'] = version
+    environ['NCPA_BUILD_VER_CLEAN'] = version
 shutil.copy(nsi_store, nsi)
 b = subprocess.Popen([nsis, nsi], env=environ)
 b.wait()
