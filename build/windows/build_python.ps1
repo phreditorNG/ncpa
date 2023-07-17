@@ -31,12 +31,14 @@
 
 ### 0. Script Configuration
 Param(
-    [string]$7z_ver,
-    [string]$openssl_ver,
-    [string]$python_ver,
+    [string]$7z_ver,        # 7-Zip version to install (e.g. 2301-x64)
+    [string]$openssl_ver,   # OpenSSL version to build (e.g. 3.0.8)
+    [string]$python_ver,    # Python version to build (e.g. 3.11.3)
 
-    [string]$base_dir
+    [string]$ncpa_build_dir,# NCPA repo directory
+    [string]$base_dir       # Custom OpenSSL and Python build directory
 )
+$openssl_dir = "$base_dir\OpenSSL\"
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
 
 ## legacy - now passed in as params as seen above
@@ -71,7 +73,7 @@ if ($build_w_openssl -and $download_files){
 ## 1.0 Install Chocolatey
 ## 1.1 Install Git, Perl and Visual Studio Build Tools with Chocolatey
 Write-Host "Running Chocolatey install script..."
-Invoke-Expression -Command .\build\windows\choco_prereqs.ps1
+Invoke-Expression -Command "powershell.exe -File $ncpa_build_dir\windows\choco_prereqs.ps1"
 if ($LASTEXITCODE -ne 0) { Throw "Error running Chocolatey install script" }
 
 # Add Perl, NASM, Git and nmake to the PATH
@@ -177,7 +179,7 @@ if($build_w_openssl){
 
     # Backup the existing folder
     if (Test-Path "$python_ssl\$cpu_arch") {
-        Move-Item -Path "$python_ssl\$cpu_arch" -Destination "$python_ssl\$cpu_arch-backup" -Force -Recurse
+        Copy-Item -Path "$python_ssl\$cpu_arch" -Destination "$python_ssl\$cpu_arch-backup" -Force -Recurse
     } else {
         Write-Host "Source folder does not exist: $python_ssl\$cpu_arch"
     }
@@ -217,5 +219,5 @@ cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\
 Write-Host $pwd
 if ($LASTEXITCODE -ne 0) { Throw "Error building Python" }
 
-# return python executable for build_windows.bat
-return "$cpython_dir\PCbuild\$cpu_arch\python.exe"
+Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+refreshenv

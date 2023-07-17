@@ -22,7 +22,7 @@ goto endFileDoc
 @echo off
 
 :::: configuration
-set 7z_ver=2301-x64
+set ver_7z=2301-x64
 set python_ver=3.11.3
 set openssl_ver=3.0.8
 
@@ -47,17 +47,23 @@ echo Execution policy set to Unrestricted
 
 :::: build OpenSSL/Python
 echo Building OpenSSL/Python
-@REM powershell -File .\windows\build_python.ps1 -7z_ver %7z_ver% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
+powershell -File .\windows\build_python.ps1 -ncpa_build_dir %cd% -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
 
 :::: build NCPA with Built Python:
-:: i.e. C:\Users\Administrator\NCPA_PYTHON\Python-3.11.3\Python-3.11.3\PCbuild\amd64\python.exe
+:: i.e. C:\Users\Administrator\NCPA_PYTHON\Python-3.11.3\Python-3.11.3\PCbuild\amd64\py.exe - Python Launcher
 echo Building NCPA with Built Python
 set PYTHONPATH=%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild
-set PYTHONEXEPATH=%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild\%cpu_arch%\py.exe
-set pydir=%PYTHONEXEPATH%
-set python=%PYTHONEXEPATH%
+set PYEXEPATH=%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild\%cpu_arch%\py.exe
+set pydir=%PYEXEPATH%
+set python=%PYEXEPATH%
 set PATH=%PYTHONPATH%;%PATH%
-Call %PYTHONEXEPATH% .\windows\build_ncpa.py %PYTHONPATH% > build_ncpa.log
+echo Calling %PYEXEPATH% .\windows\build_ncpa.py %PYTHONPATH%
+echo.
+echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
+Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
+
+@REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
+Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH%
 
 :::: Restore original execution policy
 powershell.exe -Command "Set-ExecutionPolicy %ORIGINAL_POLICY% -Scope CurrentUser -Force"

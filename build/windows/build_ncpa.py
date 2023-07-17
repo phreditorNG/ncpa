@@ -62,6 +62,7 @@ for arg in sys.argv:
 
 # Which python launcher command is available for Windows
 python_launcher = sys.argv[1] # TODO: remove this old: 'py' if shutil.which('py') else 'python'
+python_launcher = '/'.join(python_launcher.split('\\'))
 print("python_launcher:", python_launcher)
 
 # Set up paths
@@ -85,8 +86,9 @@ except:
 
 # Building nightly versions requires a git pull and pip upgrade
 if buildtype == 'nightly':
-    print("Upgrading pip and requirements")
+    print("Looking for list of pip packages to install in %s" % os.path.join(basedir, 'build', 'resources', 'require.win.txt'))
     # subprocess.Popen(['git', 'pull']).wait()
+    subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', 'pip']).wait()
     subprocess.Popen([python_launcher, '-m', 'pip', 'install', '--upgrade', '-r', os.path.join(basedir, 'build', 'resources', 'require.win.txt')]).wait()
 
 # Remove old build
@@ -108,7 +110,9 @@ sys.path.append(os.getcwd())
 # --------------------------
 
 console_colors.set_colors(0x09) # Blue on Black
+print("Building with cx_Freeze")
 subprocess.Popen([python_launcher, 'setup.py', 'build_exe']).wait()
+print("Done building with cx_Freeze")
 
 # --------------------------
 # save git hash to file
@@ -124,21 +128,21 @@ def run_cmd(cmd):
 
 console_colors.set_colors(0x0A) # Green on Black
 try:
-    GIT_LONG = run_cmd("git rev-parse HEAD")
-    GIT_SHORT = run_cmd("git rev-parse --short HEAD")
+    GIT_LONG        = run_cmd("git rev-parse HEAD")
+    GIT_SHORT       = run_cmd("git rev-parse --short HEAD")
     GIT_UNCOMMITTED = run_cmd("git status --untracked-files=no --porcelain")
 
     print("GIT_UNCOMMITED:\n", GIT_UNCOMMITTED)
 
     if GIT_UNCOMMITTED:
-         GIT_LONG = f"{GIT_LONG}++ compiled with uncommitted changes"
+         GIT_LONG  = f"{GIT_LONG}++ compiled with uncommitted changes"
          GIT_SHORT = f"{GIT_SHORT}++"
 
     GIT_HASH_FILE = f"git-{GIT_SHORT}.githash"
 
-    print("GIT_LONG:", GIT_LONG)
-    print("GIT_SHORT:", GIT_SHORT)
-    print("GIT_HASH_FILE:", GIT_HASH_FILE)
+    print("GIT_LONG:"       , GIT_LONG)
+    print("GIT_SHORT:"      , GIT_SHORT)
+    print("GIT_HASH_FILE:"  , GIT_HASH_FILE)
 
 except:
     console_colors.set_colors(0x0C) # Red on Black
@@ -168,16 +172,16 @@ shutil.copyfile(os.path.join(basedir, 'agent', 'build', 'ncpa-%s.exe' % version)
                 os.path.join(basedir, 'build', 'ncpa-%s.exe' % version))
 
 console_colors.set_colors(0x0A) # Green on Black
+
 ASCII = """
-███╗   ██╗ ██████╗██████╗  █████╗
-████╗  ██║██╔════╝██╔══██╗██╔══██╗
-██╔██╗ ██║██║     ██████╔╝███████║
-██║╚██╗██║██║     ██╔═══╝ ██╔══██║
-██║ ╚████║╚██████╗██║     ██║  ██║
-╚═╝  ╚═══╝ ╚═════╝╚═╝     ╚═╝  ╚═╝
+  _   _  ____ ____   _      _           _ _     _                             _      _       _
+ | \ | |/ ___|  _ \ / \    | |__  _   _(_) | __| |   ___ ___  _ __ ___  _ __ | | ___| |_ ___| |
+ |  \| | |   | |_) / _ \   | '_ \| | | | | |/ _` |  / __/ _ \| '_ ` _ \| '_ \| |/ _ \ __/ _ \ |
+ | |\  | |___|  __/ ___ \  | |_) | |_| | | | (_| | | (_| (_) | | | | | | |_) | |  __/ ||  __/_|
+ |_| \_|\____|_| /_/   \_\ |_.__/ \__,_|_|_|\__,_|  \___\___/|_| |_| |_| .__/|_|\___|\__\___(_)
+                                                                       |_|
 """
 print(ASCII)
-print("Build complete!")
 print("You can find the installer in the ncpa\\build directory.")
 
 console_colors.reset_colors()
