@@ -47,25 +47,27 @@ set PYDLLPATH=C:\Python311\DLLs
 
 :::: End Configuration
 
-:::: set execution policy to allow running powershell scripts
+
+:::: Set execution policy to allow running powershell scripts
 for /f "tokens=*" %%a in ('powershell.exe -Command "Get-ExecutionPolicy -Scope CurrentUser"') do set ORIGINAL_POLICY=%%a
 echo Current policy: %ORIGINAL_POLICY%
 powershell.exe -Command "Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force"
 echo Execution policy set to Unrestricted
+:::: Finished setting execution policy
 
-:::: build OpenSSL/Python
+
+:::: Build OpenSSL/Python
 echo Building OpenSSL/Python
-@REM powershell -File .\windows\build_python.ps1 -ncpa_build_dir %cd% -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
+powershell -File %~dp0\windows\build_python.ps1 -ncpa_build_dir %cd% -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
+:::: Finished building OpenSSL/Python
 
-:::: build NCPA with Built Python:
+
+:::: Build NCPA with Built Python:
 :: i.e. C:\Users\Administrator\NCPA_PYTHON\Python-3.11.3\Python-3.11.3\PCbuild\amd64\py.exe - Python Launcher
 echo Building NCPA with Built Python
 set pydir=%PYEXEPATH%
 set python=%PYEXEPATH%
-@REM set PATH=%PYTHONPATH%;%PATH%
-echo.
-echo PATH: %PATH%
-echo.
+echo PATH: %PATH%s
 echo %PYEXEPATH% python version:
 Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
 echo.
@@ -78,11 +80,13 @@ for %%i in (%ssl_dlls%) do (
     copy %%i %PYDLLPATH%
 )
 
-echo Calling %PYEXEPATH% .\windows\build_ncpa.py %PYTHONPATH%
+echo Calling %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYTHONPATH%
 echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
 echo.
 @REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
 Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH%
+:::: Finished building NCPA with Built Python
+
 
 :::: Restore original execution policy
 powershell.exe -Command "Set-ExecutionPolicy %ORIGINAL_POLICY% -Scope CurrentUser -Force"
