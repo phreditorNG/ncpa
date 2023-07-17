@@ -127,7 +127,7 @@ if ($build_openssl) {
     ## 3.2 Build & Install OpenSSL
     Set-Location $base_dir\openssl-$openssl_ver
     Write-Host "Building and installing OpenSSL..."
-    cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && nmake && nmake test && nmake install"
+    cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && cmd /k `"`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && nmake && nmake test && nmake install`""
     $env:OPENSSL_ROOT_DIR = "$base_url\OpenSSL"
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
     if ($LASTEXITCODE -ne 0) { Throw "Error configuring/building/installing OpenSSL" }

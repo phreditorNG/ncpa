@@ -67,7 +67,6 @@ powershell -File %~dp0\windows\build_python.ps1 -ncpa_build_dir %cd% -7z_ver %ve
 echo Building NCPA with Built Python
 set pydir=%PYEXEPATH%
 set python=%PYEXEPATH%
-echo PATH: %PATH%s
 echo %PYEXEPATH% python version:
 Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
 echo.
