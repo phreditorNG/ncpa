@@ -110,9 +110,12 @@ sys.path.append(os.getcwd())
 # --------------------------
 
 console_colors.set_colors(0x09) # Blue on Black
-print("Building with cx_Freeze")
-subprocess.Popen([python_launcher, 'setup.py', 'build_exe']).wait()
-print("Done building with cx_Freeze")
+print("Freezing with cx_Freeze")
+print("you can track progress in ncpa\\build\\cxFreeze_build.log")
+print("Python launcher:", python_launcher)
+with open(os.path.join('build', 'cxFreeze_build.log'), 'w') as logfile:
+    subprocess.Popen([python_launcher, 'setup.py', 'build_exe'], stdout=logfile).wait()
+print("Done freezing")
 
 # --------------------------
 # save git hash to file
