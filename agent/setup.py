@@ -21,7 +21,6 @@ from cx_Freeze import setup, Executable
 __ARCH__ = platform.architecture()[0].lower()
 __SYSTEM__ = os.name
 
-
 # Get version from the VERSION file and remove anything after the . such as
 # 3.0.0.a or 3.1.0.rc1 to form a generic version number since we can't handle
 # a version number like that on Windows
@@ -118,6 +117,9 @@ setup(name = "NCPA",
 )
 
 if __SYSTEM__ == 'nt':
+    # sleep to let the file system catch up
+    import time
+    time.sleep(15)
     # Rename to enable NSI to find stuff
     py_ver = platform.python_version()
     py_ver = '.'.join(py_ver.split('.')[:2])
