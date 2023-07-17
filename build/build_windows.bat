@@ -58,7 +58,7 @@ echo Execution policy set to Unrestricted
 
 :::: Build OpenSSL/Python
 echo Building OpenSSL/Python
-powershell -File %~dp0\windows\build_python.ps1 -ncpa_build_dir %cd% -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
+powershell -File %~dp0\windows\build_python.ps1 -ncpa_build_dir %~dp0 -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
 :::: Finished building OpenSSL/Python
 
 
