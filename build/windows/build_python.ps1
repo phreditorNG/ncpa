@@ -76,7 +76,7 @@ Write-Host "Running Chocolatey install script..."
 Invoke-Expression -Command "powershell.exe -File $ncpa_build_dir\windows\choco_prereqs.ps1"
 if ($LASTEXITCODE -ne 0) { Throw "Error running Chocolatey install script" }
 
-# Add Perl, NASM, Git and nmake to the PATH
+# Add Perl, NASM, Git, etc. to the PATH
 Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
 $env:Path += ";C:\Program Files\NASM"
@@ -127,7 +127,7 @@ if ($build_openssl) {
     ## 3.2 Build & Install OpenSSL
     Set-Location $base_dir\openssl-$openssl_ver
     Write-Host "Building and installing OpenSSL..."
-    cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && cmd /k `"`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && nmake && nmake test && nmake install`""
+    cmd /c "`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && cmd /k `"`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && nmake && nmake test && nmake install`""
     $env:OPENSSL_ROOT_DIR = "$base_url\OpenSSL"
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
     if ($LASTEXITCODE -ne 0) { Throw "Error configuring/building/installing OpenSSL" }
