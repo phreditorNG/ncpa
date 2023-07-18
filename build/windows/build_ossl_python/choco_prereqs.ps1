@@ -36,13 +36,14 @@ try {
 
 ### 2. Install Git, Perl and Visual Studio Build Tools
 Write-Host "Chocolatey installing prerequisites"
-choco install git -y
-choco install strawberryperl -y
-choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools;includeRecommended" -y
+if(-not (Get-Command git)){ choco install git -y }
+if(-not (Get-Command perl)){ choco install strawberryperl -y }
+if(-not (Get-Command nasm)){ choco install nasm -y }
+if(-not (Get-Command python)){ choco install python -y }
+
+#choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools;includeRecommended" -y
 choco install visualstudio2022buildtools -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
 choco install visualstudio2022community -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
-choco install nasm -y
-choco install python -y
 
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 refreshenv
