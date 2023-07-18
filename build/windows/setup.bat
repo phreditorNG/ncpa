@@ -1,3 +1,4 @@
+:::: TODO: remove this file
 @echo off
 if not exist "%pydir%" (
   echo Set %%pydir%% to point to the desired python install
@@ -20,7 +21,7 @@ if not exist "%PROGRAMFILES%\NSIS" (
 
 where python > nul:
 if ERRORLEVEL 1 (
-  echo python isn't in your path, fix your path or install python 
+  echo python isn't in your path, fix your path or install python
   exit /B 1
 )
 
