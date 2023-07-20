@@ -139,8 +139,8 @@ set PYEXEPATH=%PYTHONPATH%\%cpu_arch%\py.exe
 :: Installed Python DLLs directory (installed via Chocolatey)
 set PYDLLPATH=C:\Python%py_ver_spliced%\DLLs
 
-if (%build_ncpa%) (
-    if (%build_openssl_python%) (
+if "%build_ncpa%"=="true" (
+    if "%build_openssl_python%"=="true" (
         :: use built Python
         set PYTHONPATH=%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild
         set PYSSLPATH=%PYTHONPATH%\%cpu_arch%\
