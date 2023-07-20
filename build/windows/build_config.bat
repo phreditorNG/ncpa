@@ -174,11 +174,11 @@ if "%build_ncpa%"=="true" (
         echo OpenSSL/Python already built?: %ossl_python_already_built%
         echo Building OpenSSL/Python?: %build_openssl_python%
         echo Building NCPA?: %build_ncpa%
-        goto :build_ncpa
+        goto :show_versions
     ) else (
         echo Building NCPA with Installed Python
         echo Python Executable: %PYEXEPATH%
-        goto :build_ncpa_wo_openssl_python
+        goto :show_versions
     )
 )
 
