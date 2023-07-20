@@ -116,13 +116,15 @@ if ($build_openssl_python){
 # Force PowerShell to use TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-[System.Console]::BackgroundColor = "DarkMagenta"
-[System.Console]::ForegroundColor = "Magenta"
+[System.Console]::BackgroundColor = "DarkBlue"
+[System.Console]::ForegroundColor = "White"
 Write-Host "Running Chocolatey install script..."
+[System.Console]::BackgroundColor = "Black"
+[System.Console]::ForegroundColor = "Magenta"
 . $build_ossl_python_dir\choco_prereqs.ps1
 
 # Add Perl, NASM, Git, etc. to the PATH
-[System.Console]::BackgroundColor = "Black"
+[System.Console]::BackgroundColor = "DarkBlue"
 [System.Console]::ForegroundColor = "White"
 Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
@@ -136,8 +138,10 @@ if($build_openssl_python) {
     if (Test-Path -Path "C:\Program Files\7-Zip"){
         Write-Host "7-Zip already installed"
     } else {
+        [System.Console]::BackgroundColor = "DarkBlue"
+        [System.Console]::ForegroundColor = "White"
         Write-Host "Installing 7-Zip..."
-        [System.Console]::BackgroundColor = "DarkMagenta"
+        [System.Console]::BackgroundColor = "Black"
         [System.Console]::ForegroundColor = "Yellow"
         $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
         Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller
@@ -148,18 +152,18 @@ if($build_openssl_python) {
     }
 
     ### 3. Build OpenSSL - always called, build_openssl.ps1 will check if it needs to build
-    [System.Console]::BackgroundColor = "Black"
+    [System.Console]::BackgroundColor = "DarkBlue"
     [System.Console]::ForegroundColor = "White"
     Write-Host "Running OpenSSL build script..."
-    [System.Console]::BackgroundColor = "DarkMagenta"
+    [System.Console]::BackgroundColor = "Black"
     [System.Console]::ForegroundColor = "Yellow"
     . $build_ossl_python_dir\build_openssl.ps1
 
     ### 4. Build Python - always called, build_python.ps1 will check if it needs to build
-    [System.Console]::BackgroundColor = "Black"
+    [System.Console]::BackgroundColor = "DarkBlue"
     [System.Console]::ForegroundColor = "White"
     Write-Host "Running Python build script..."
-    [System.Console]::BackgroundColor = "DarkMagenta"
+    [System.Console]::BackgroundColor = "Black"
     [System.Console]::ForegroundColor = "Yellow"
     . $build_ossl_python_dir\build_python.ps1
 }
