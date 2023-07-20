@@ -30,11 +30,6 @@
 ##### ----------------------------------
 
 ### 0. Script Configuration
-
-    -install_prereqs %install_prereqs% ^
-    -download_openssl_and_python %download_openssl_and_python% ^
-    -build_openssl_python %build_openssl_python% ^
-    -build_ncpa %build_ncpa%
 Param(
     [string]$7z_ver,            # 7-Zip version to install  (e.g. 2301-x64)
     [string]$openssl_ver,       # OpenSSL version to build  (e.g. 3.0.8)

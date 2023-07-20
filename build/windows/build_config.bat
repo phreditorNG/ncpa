@@ -3,10 +3,18 @@
 :::: Build Configuration
 :::::::::::::::::::::::::
 
+:: 7-Zip   - sourced from https://www.7-zip.org/a/7z%7z_ver%.exe
+:: OpenSSL - sourced from https://www.openssl.org/source/openssl-%openssl_ver%.tar.gz
+:: Python  - sourced from https://www.python.org/ftp/python/%python_ver%/Python-%python_ver%.tgz
+set ver_7z=2301-x64
+set openssl_ver=3.0.8
+set python_ver=3.11.4
+
 :::: OpenSSL/Python Build Directory
 set base_dir=%USERPROFILE%\NCPA-Building_Python
 
 :::: Build Options
+:: NOTE: these will be overridden by command line options
 :: install_prereqs              - whether to use Chocolatey to install prerequisites
 :: download_openssl_and_python  - whether to download OpenSSL/Python or use local copies
 :: build_openssl_python         - whether to build OpenSSL/Python - if false, will use installed Python
@@ -16,20 +24,15 @@ set download_openssl_and_python=true
 set build_openssl_python=true
 set build_ncpa=true
 
-if exist "%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild\amd64\py.exe" (
-    set ossl_python_already_built=true
-) else (
-    set ossl_python_already_built=false
-)
-
-:::: Product version selection
-set ver_7z=2301-x64
-set python_ver=3.11.3
-set openssl_ver=3.0.8
-
 :::::::::::::::::::::::::
 :::: Auto-Configuration
 :::::::::::::::::::::::::
+
+if exist "%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild\amd64\py.exe" (
+    set python_already_built=true
+) else (
+    set python_already_built=false
+)
 
 :::: Take options from command line
 :options_loop
@@ -58,6 +61,24 @@ if "%~1"=="-h" (
     echo This may break your system.
     echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     exit /B 1
+)
+:: --python-ver=<version> - specify Python version to build (e.g. --python-ver=3.11.4)
+if "%~1"=="--python-ver" (
+    set python_ver=%~2
+    shift
+    shift
+    print python_ver: %python_ver%
+    exit /B 1
+    goto :options_loop
+)
+:: --openssl-ver=<version> - specify OpenSSL version to build (e.g. --openssl-ver=3.0.8)
+if "%~1"=="--openssl-ver" (
+    set openssl_ver=%~2
+    shift
+    shift
+    print openssl_ver: %openssl_ver%
+    exit /B 1
+    goto :options_loop
 )
 if "%~1"=="-no_prereqs" goto :no_prereqs
 if "%~1"=="-np"         goto :no_prereqs
