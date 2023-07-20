@@ -62,6 +62,7 @@ goto :options_loop
 :::::::::::::::::::::::
 :::: 1. Configuration
 :::::::::::::::::::::::
+echo Configuring build
 call %~dp0\windows\build_config.bat %build_options%
 if ERRORLEVEL 1 exit /B
 
