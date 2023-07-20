@@ -1,14 +1,14 @@
-# OpenSSL takes three eternities to build, so we give the option to skip if they have it installed already
-#   also skips if $build_w_openssl is $false
-if ($build_openssl) {
-    Set-Location $base_dir
-    ## 3.0 Download OpenSSL
-    if($download_files){
-        Write-Host "Downloading OpenSSL..."
-        Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop
-        if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
-    }
+### 3.0 Build OpenSSL
+# navigate to the OpenSSL/Python building directory
+Set-Location $base_dir
+## 3.0 Download OpenSSL
+if($download_files){
+    Write-Host "Downloading OpenSSL..."
+    Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop
+    if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
+}
 
+if ($build_openssl_python) {
     ## 3.1 Extract OpenSSL
     Write-Host "Extracting OpenSSL..."
     $openssl_tar = "$base_dir\openssl-$openssl_ver.tar.gz"

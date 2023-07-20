@@ -8,7 +8,7 @@
 :: Python  - sourced from https://www.python.org/ftp/python/%python_ver%/Python-%python_ver%.tgz
 set ver_7z=2301-x64
 set openssl_ver=3.0.8
-set python_ver=3.11.4
+set python_ver=3.11.3
 
 :::: OpenSSL/Python Build Directory
 set base_dir=%USERPROFILE%\NCPA-Building_Python

@@ -15,18 +15,12 @@ if ($download_files){
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$python_tar_extracted`" `-o`"$base_dir\Python-$python_ver`" -y" -Wait
 }
 
-# Remove the .tgz and .tar files
-if (-not $preserve_files){
-    Remove-Item -Path $python_tar, $python_tar_extracted
-}
-if ($LASTEXITCODE -ne 0) { Throw "Error extracting Python-$python_ver.tgz" }
-
 ## 4.2 Add custom OpenSSL to the Python build
 # 4.2.0 Copy OpenSSL files from
 #   $base_url\OpenSSL
 #     to
 #   $base_url\Python-$python_ver\Python-$python_ver\externals\openssl-bin-version\your_cpu_architecture
-if($build_w_openssl){
+if($build_openssl_python){
     Write-Host "Copying custom OpenSSL to Python build externals"
     Copy-Item -Path "$base_dir\OpenSSL\include\openssl\applink.c" -Destination "$base_dir\OpenSSL\include\applink.c" -Force
     $cpu_arch = [System.Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
@@ -74,7 +68,7 @@ if($build_w_openssl){
     $content = $content -replace '<Target Name="_CleanSSLDLL" Condition="\$\(SkipCopySSLDLL\) == ''''" BeforeTargets="Clean">', '<Target Name="_CleanSSLDLL" BeforeTargets="Clean">'
     $content | Set-Content -Path $openssl_props
 } else {
-    Write-Host "`$build_w_openssl `$false, skipping custom OpenSSL"
+    Write-Host "`$build_openssl_python `$false, skipping bundling custom OpenSSL"
 }
 
 ## 4.3 Build Python

@@ -64,7 +64,7 @@ goto :options_loop
 :::::::::::::::::::::::
 echo Configuring build
 call %~dp0\windows\build_config.bat %build_options%
-if ERRORLEVEL 1 exit /B
+if ERRORLEVEL 1 goto :restore_policy
 
 :::::::::::::::::::::::
 :::: 2. Set execution policy to allow running powershell scripts
@@ -73,7 +73,7 @@ for /f "tokens=*" %%a in ('powershell.exe -Command "Get-ExecutionPolicy -Scope C
 echo Current policy: %ORIGINAL_POLICY%
 powershell.exe -Command "Set-ExecutionPolicy Unrestricted -Scope CurrentUser -Force"
 echo Execution policy set to Unrestricted
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+if ERRORLEVEL 1 goto :restore_policy
 
 :::::::::::::::::::::::
 :::: 3. Build OpenSSL/Python
@@ -84,21 +84,17 @@ echo Building OpenSSL/Python
 :: 2. Download/Build OpenSSL
 :: 3. Download/Build Python
 powershell -File %~dp0\windows\build_ossl_python\build_all.ps1 ^
-:: directories
     -ncpa_build_dir %~dp0 ^
     -base_dir %base_dir% ^
-:: product versions
     -7z_ver %ver_7z% ^
     -python_ver %python_ver% ^
     -openssl_ver %openssl_ver% ^
-::
     -cpu_arch %cpu_arch% ^
-:: build options
     -install_prereqs %install_prereqs% ^
     -download_openssl_and_python %download_openssl_and_python% ^
     -build_openssl_python %build_openssl_python% ^
     -build_ncpa %build_ncpa%
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+if ERRORLEVEL 1 goto :restore_policy
 
 :::::::::::::::::::::::
 :::: 4. Build NCPA with Built Python:
@@ -119,19 +115,20 @@ IF %build_ncpa% (
         echo Copying %%~nxi to %PYDLLPATH%
         copy %%i %PYDLLPATH%
     )
-    if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+    if ERRORLEVEL 1 goto :restore_policy
 
     echo Calling %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYTHONPATH%
     echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
     echo.
     @REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
     Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH%
-    if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+    if ERRORLEVEL 1 goto :restore_policy
 )
 
 :::::::::::::::::::::::
 :::: 5. Restore original execution policy
 :::::::::::::::::::::::
+:restore_policy
 powershell.exe -Command "Set-ExecutionPolicy %ORIGINAL_POLICY% -Scope CurrentUser -Force"
 echo Execution policy restored to %ORIGINAL_POLICY%
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%

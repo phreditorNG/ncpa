@@ -11,11 +11,11 @@
 
 if (-not $download_files){
     if (-not (Test-Path -Path "$base_url\OpenSSL")){ # check ssl
-        Write-Host "OpenSSL not found, setting $download_files to $true"
+        Write-Host "OpenSSL not found in $base_url\OpenSSL, setting `$download_files to $true"
         $download_files = $true
     }
     if (-not (Test-Path -Path "$base_url\Python-$python_ver")){
-        Write-Host "Python not found, setting $download_files to $true"
+        Write-Host "Python not found in $base_url\Python-$python_ver, setting `$download_files to $true"
         $download_files = $true
     }
 }

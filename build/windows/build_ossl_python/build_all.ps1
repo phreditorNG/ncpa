@@ -31,6 +31,7 @@
 
 ### 0. Script Configuration
 Param(
+    [string]$test_param,
     [string]$7z_ver,            # 7-Zip version to install  (e.g. 2301-x64)
     [string]$openssl_ver,       # OpenSSL version to build  (e.g. 3.0.8)
     [string]$python_ver,        # Python version to build   (e.g. 3.11.3)
@@ -40,15 +41,26 @@ Param(
     [string]$ncpa_build_dir,    # NCPA repo directory
     [string]$base_dir,          # OpenSSL and Python building directory
 
-    [bool]$install_prereqs,     # install prerequisites                         ($true/$false)
-    [bool]$download_openssl_python, # download OpenSSL and Python tarballs      ($true/$false)
-    [bool]$build_openssl_python,    # build OpenSSL and Python                  ($true/$false)
-    [bool]$build_ncpa           # build NCPA                                    ($true/$false)
+    [string]$install_prereqs,         # install prerequisites                ($true/$false)
+    [string]$download_openssl_python, # download OpenSSL and Python tarballs ($true/$false)
+    [string]$build_openssl_python,    # build OpenSSL and Python             ($true/$false)
+    [string]$build_ncpa               # build NCPA                           ($true/$false)
 )
 $openssl_dir = "$base_dir\OpenSSL\"
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
+# remove last character (\) from $ncpa_build_dir
+$ncpa_build_dir = $ncpa_build_dir.Substring(0, $ncpa_build_dir.Length - 1)
+$build_ossl_python_dir = "$ncpa_build_dir\windows\build_ossl_python"
 
-Write-Host "Received parameters:"
+# Convert boolean string params to boolean (batch doesn't HAVE booleans)
+$install_prereqs = $install_prereqs -eq "true"
+$download_openssl_python = $download_openssl_python -eq "true"
+$build_openssl_python = $build_openssl_python -eq "true"
+$build_ncpa = $build_ncpa -eq "true"
+
+Write-Host "test param: $test_param"
+
+Write-Host "Powershell received parameters:"
 Write-Host "  7z_ver:               $7z_ver"
 Write-Host "  openssl_ver:          $openssl_ver"
 Write-Host "  python_ver:           $python_ver"
@@ -70,6 +82,10 @@ if (-not (Test-Path -Path $base_dir)) {
 }
 Set-Location $base_dir
 
+# Store original console colors
+$sysBGColor = [System.Console]::BackgroundColor
+$sysFGColor = [System.Console]::ForegroundColor
+
 # OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
 if ($build_openssl_python){
     if (Test-Path -Path "$openssl_dir\bin\openssl.exe"){
@@ -84,22 +100,26 @@ if ($build_openssl_python){
 # Offer to not build Python again
 if ($build_openssl_python){
     if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe"){
-        $installed_version = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import sys; print(sys.version)"
+        $installed_version = & "C:\Windows\py.exe" -c "import sys; print(sys.version)"
         $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
-        $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build/install Python version $python_ver`? `n(y/n)"
+        $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build Python version $python_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_openssl_python = $true
         }
-    } else { $build_openssl_python = $true }
+    } else { Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe"
+        $build_openssl_python = $true }
 }
 
 ### 1. Chocolatey Script
 ## 1.0 Install Chocolatey
 ## 1.1 Install Git, Perl and Visual Studio Build Tools with Chocolatey
+[System.Console]::BackgroundColor = "DarkBlue"
+[System.Console]::ForegroundColor = "Magenta"
 Write-Host "Running Chocolatey install script..."
-. $ncpa_build_dir\windows\choco_prereqs.ps1
+. $build_ossl_python_dir\choco_prereqs.ps1
 
 # Add Perl, NASM, Git, etc. to the PATH
+[System.Console]::BackgroundColor = "Black"
 Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
 $env:Path += ";C:\Program Files\NASM"
@@ -112,6 +132,7 @@ if($build_openssl_python) {
     if (Test-Path -Path "C:\Program Files\7-Zip"){
         Write-Host "7-Zip already installed"
     } else {
+        [System.Console]::BackgroundColor = "DarkBlue"
         Write-Host "Installing 7-Zip..."
         $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
         Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller
@@ -121,14 +142,21 @@ if($build_openssl_python) {
         if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
     }
 
-    ### 3. Build OpenSSL
+    ### 3. Build OpenSSL - always called, build_openssl.ps1 will check if it needs to build
+    [System.Console]::BackgroundColor = "DarkBlue"
+    [System.Console]::ForegroundColor = "Gray"
     Write-Host "Running OpenSSL build script..."
-    . $ncpa_build_dir\windows\build_openssl.ps1
+    . $build_ossl_python_dir\build_openssl.ps1
 
-    ### 4. Build Python
+    ### 4. Build Python - always called, build_python.ps1 will check if it needs to build
+    [System.Console]::BackgroundColor = "DarkBlue"
+    [System.Console]::ForegroundColor = "Yellow"
     Write-Host "Running Python build script..."
-    . $ncpa_build_dir\windows\build_python.ps1
+    . $build_ossl_python_dir\build_python.ps1
 }
 
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 refreshenv
+
+[System.Console]::BackgroundColor = $sysBGColor
+[System.Console]::ForegroundColor = $sysFGColor
