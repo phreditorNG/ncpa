@@ -29,14 +29,14 @@ setlocal
 echo option: %~1
 set "build_options="
 if "%~1"=="" goto :end_options_loop
-if "%~1"=="np"          goto :no_prereqs
-if "%~1"=="-no_prereqs" goto :no_prereqs
-if "%~1"=="nd"          goto :no_download
+if "%~1"=="-np"          goto :no_prereqs
+if "%~1"=="-no_prereqs"  goto :no_prereqs
+if "%~1"=="-nd"          goto :no_download
 if "%~1"=="-no_download" goto :no_download
-if "%~1"=="nb"          goto :no_build
-if "%~1"=="-no_build"   goto :no_build
-if "%~1"=="nn"          goto :no_ncpa
-if "%~1"=="-no_ncpa"    goto :no_ncpa
+if "%~1"=="-nb"          goto :no_build
+if "%~1"=="-no_build"    goto :no_build
+if "%~1"=="-nn"          goto :no_ncpa
+if "%~1"=="-no_ncpa"     goto :no_ncpa
 
 if "%~1"=="-h" (
     set "build_options=-h"
