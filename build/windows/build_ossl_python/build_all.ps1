@@ -113,6 +113,9 @@ if ($build_openssl_python){
 ### 1. Chocolatey Script
 ## 1.0 Install Chocolatey
 ## 1.1 Install Git, Perl and Visual Studio Build Tools with Chocolatey
+# Force PowerShell to use TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 [System.Console]::BackgroundColor = "DarkBlue"
 [System.Console]::ForegroundColor = "Magenta"
 Write-Host "Running Chocolatey install script..."
