@@ -35,45 +35,69 @@ set openssl_ver=3.0.8
 :options_loop
 if "%~1"=="" goto :end_options_loop
 if "%~1"=="-h" (
-    echo Usage: %~nx0 [options]
+    echo.
+    echo        ---------------------------
+    echo Usage: build_windows.bat [options]
+    echo        ---------------------------
     echo.
     echo Options:
     echo -h                  Show this help message
-    echo -no_prereqs         Do not install prerequisites
-    echo -no_download        Do not download OpenSSL/Python
-    echo -no_build           Do not build OpenSSL/Python
-    echo -no_ncpa            Do not build NCPA
+    echo -np, -no_prereqs    Do not install prerequisites
+    echo -nd, -no_download   Do not download OpenSSL/Python
+    echo -nb, -no_build      Do not build OpenSSL/Python
+    echo -nn, -no_ncpa       Do not build NCPA
     echo.
-    echo Example: %~nx0 -no_prereqs -no_download -no_build
-    echo This will not install prerequisites, download OpenSSL/Python, or build OpenSSL/Python and will only build NCPA using installed Python
+    echo          ----------------------------------
+    echo Example: build_windows.bat -no_download -nb
+    echo          ----------------------------------
+    echo In this example, the script skips downloading and building OpenSSL/Python. It will build NCPA with the Python installed through the prerequisites instead.
     echo.
-    echo WARNING: Do not run this script on a production machine, it will install Chocolatey and other software and may break your system
     echo.
-    exit /B 0
+    echo !!!!!!!!!! WARNING !!!!!!!!!!
+    echo Do not run this script on a production machine, it will install Chocolatey and other software.
+    echo This may break your system.
+    echo !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    exit /B 1
 )
-if "%~1"=="-no_prereqs" (
+if "%~1"=="-no_prereqs" goto :no_prereqs
+if "%~1"=="-np"         goto :no_prereqs
+if "%~1"=="-no_download" goto :no_download
+if "%~1"=="-nd"         goto :no_download
+if "%~1"=="-no_build"   goto :no_build
+if "%~1"=="-nb"         goto :no_build
+if "%~1"=="-no_ncpa"    goto :no_ncpa
+if "%~1"=="-nn"         goto :no_ncpa
+goto :invalid
+:no_prereqs
+(
     set install_prereqs=false
     shift
     goto :options_loop
 )
-if "%~1"=="-no_download" (
+:no_download
+(
     set download_openssl_and_python=false
     shift
     goto :options_loop
 )
-if "%~1"=="-no_build" (
+:no_build
+(
     set build_openssl_python=false
     shift
     goto :options_loop
 )
-if "%~1"=="-no_ncpa" (
+:no_ncpa
+(
     set build_ncpa=false
     shift
     goto :options_loop
 )
-echo Invalid option: %~1, use -h for help
-shift
-goto :options_loop
+:invalid
+(
+    echo Invalid option: %~1, use -h for help
+    shift
+    goto :options_loop
+)
 :end_options_loop
 
 :::: CPU Architecture

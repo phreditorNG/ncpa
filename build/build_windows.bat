@@ -1,3 +1,4 @@
+@echo off
 goto endFileDoc
 :: Controller script for building NCPA on Windows.
 ::     THIS SCRIPT MUST BE RUN AS ADMINISTRATOR
@@ -21,7 +22,6 @@ goto endFileDoc
 :: TODO: Add support for building NCPA with a pre-built Python - Allow building with official Python releases (will have OSSL 3 soon)
 :endFileDoc
 
-@echo off
 setlocal
 
 :::: Take options from command line to pass to build_config.ps1
@@ -57,7 +57,7 @@ goto :options_loop
 :::: 1. Configuration
 :::::::::::::::::::::::
 call %~dp0\windows\build_config.bat %build_options%
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+if ERRORLEVEL 1 exit /B
 
 :::::::::::::::::::::::
 :::: 2. Set execution policy to allow running powershell scripts
