@@ -35,6 +35,8 @@ Param(
     [string]$openssl_ver,       # OpenSSL version to build  (e.g. 3.0.8)
     [string]$python_ver,        # Python version to build   (e.g. 3.11.3)
 
+    [string]$cpu_arch,          # CPU architecture          (e.g. amd64)
+
     [string]$ncpa_build_dir,    # NCPA repo directory
     [string]$base_dir,          # OpenSSL and Python building directory
 
@@ -45,6 +47,17 @@ Param(
 )
 $openssl_dir = "$base_dir\OpenSSL\"
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
+
+Write-Host "Received parameters:"
+Write-Host "  7z_ver:               $7z_ver"
+Write-Host "  openssl_ver:          $openssl_ver"
+Write-Host "  python_ver:           $python_ver"
+Write-Host "  ncpa_build_dir:       $ncpa_build_dir"
+Write-Host "  base_dir:             $base_dir"
+Write-Host "  install_prereqs:      $install_prereqs"
+Write-Host "  download_openssl_python: $download_openssl_python"
+Write-Host "  build_openssl_python: $build_openssl_python"
+Write-Host "  build_ncpa:           $build_ncpa"
 
 ## legacy - now passed in as params as seen above
 #$7z_ver      = "2301-x64" # 7-Zip   - sourced from https://www.7-zip.org/a/7z$7z_ver.exe
@@ -63,6 +76,17 @@ if ($build_openssl_python){
         $installed_version = & "$openssl_dir\bin\openssl.exe" version
         $installed_version = $installed_version -replace 'OpenSSL\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
+        if ($userInput -eq "yes" -or $userInput -eq "y"){
+            $build_openssl_python = $true
+        }
+    } else { $build_openssl_python = $true }
+}
+# Offer to not build Python again
+if ($build_openssl_python){
+    if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe"){
+        $installed_version = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import sys; print(sys.version)"
+        $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
+        $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build/install Python version $python_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_openssl_python = $true
         }

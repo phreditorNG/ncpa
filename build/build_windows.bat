@@ -84,13 +84,15 @@ echo Building OpenSSL/Python
 :: 2. Download/Build OpenSSL
 :: 3. Download/Build Python
 powershell -File %~dp0\windows\build_ossl_python\build_all.ps1 ^
+:: directories
     -ncpa_build_dir %~dp0 ^
+    -base_dir %base_dir% ^
 :: product versions
     -7z_ver %ver_7z% ^
     -python_ver %python_ver% ^
     -openssl_ver %openssl_ver% ^
 ::
-    -base_dir %base_dir% ^
+    -cpu_arch %cpu_arch% ^
 :: build options
     -install_prereqs %install_prereqs% ^
     -download_openssl_and_python %download_openssl_and_python% ^
