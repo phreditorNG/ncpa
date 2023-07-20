@@ -90,35 +90,25 @@ if "%~1"=="-no_ncpa"    goto :no_ncpa
 if "%~1"=="-nn"         goto :no_ncpa
 goto :invalid
 :no_prereqs
-(
     set install_prereqs=false
     shift
     goto :options_loop
-)
 :no_download
-(
     set download_openssl_and_python=false
     shift
     goto :options_loop
-)
 :no_build
-(
     set build_openssl_python=false
     shift
     goto :options_loop
-)
 :no_ncpa
-(
     set build_ncpa=false
     shift
     goto :options_loop
-)
 :invalid
-(
     echo Invalid option: %~1, use -h for help
     shift
     goto :options_loop
-)
 :end_options_loop
 
 :::: CPU Architecture

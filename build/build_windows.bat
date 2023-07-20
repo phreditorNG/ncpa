@@ -43,25 +43,17 @@ if "%~1"=="-h" (
     goto :end_options_loop
 )
 :no_prereqs
-(
     set "build_options=%build_options% -no_prereqs"
     goto :options_loop
-)
 :no_download
-(
     set "build_options=%build_options% -no_download"
     goto :options_loop
-)
 :no_build
-(
     set "build_options=%build_options% -no_build"
     goto :options_loop
-)
 :no_ncpa
-(
     set "build_options=%build_options% -no_ncpa"
     goto :options_loop
-)
 echo Invalid option: %~1, use -h for help
 shift
 goto :options_loop
