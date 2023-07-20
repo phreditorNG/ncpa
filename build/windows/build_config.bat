@@ -167,8 +167,8 @@ echo Build OpenSSL/Python?: %build_openssl_python%
 echo Build NCPA?: %build_ncpa%
 echo.
 
-if (%build_ncpa%) (
-    if (%build_openssl_python%) (
+if "%build_ncpa%"=="true" (
+    if "%build_openssl_python%"=="true" (
         echo Building NCPA with Built Python
         echo Openssl/Python Build Directory: %base_dir%
         echo OpenSSL/Python already built?: %ossl_python_already_built%
