@@ -31,9 +31,50 @@ set openssl_ver=3.0.8
 :::: Auto-Configuration
 :::::::::::::::::::::::::
 
-:: Splice Python version to get install directory C:\Python<version> (e.g. C:\Python311)
-for /f "tokens=1-2 delims=." %%a in ("%python_ver%") do set major=%%a&set minor=%%b
-set py_ver_spliced=%major%%minor%
+:::: Take options from command line
+:options_loop
+if "%~1"=="" goto :end_options_loop
+if "%~1"=="-h" (
+    echo Usage: %~nx0 [options]
+    echo.
+    echo Options:
+    echo -h                  Show this help message
+    echo -no_prereqs         Do not install prerequisites
+    echo -no_download        Do not download OpenSSL/Python
+    echo -no_build           Do not build OpenSSL/Python
+    echo -no_ncpa            Do not build NCPA
+    echo.
+    echo Example: %~nx0 -no_prereqs -no_download -no_build
+    echo This will not install prerequisites, download OpenSSL/Python, or build OpenSSL/Python and will only build NCPA using installed Python
+    echo.
+    echo WARNING: Do not run this script on a production machine, it will install Chocolatey and other software and may break your system
+    echo.
+    exit /B 0
+)
+if "%~1"=="-no_prereqs" (
+    set install_prereqs=false
+    shift
+    goto :options_loop
+)
+if "%~1"=="-no_download" (
+    set download_openssl_and_python=false
+    shift
+    goto :options_loop
+)
+if "%~1"=="-no_build" (
+    set build_openssl_python=false
+    shift
+    goto :options_loop
+)
+if "%~1"=="-no_ncpa" (
+    set build_ncpa=false
+    shift
+    goto :options_loop
+)
+echo Invalid option: %~1, use -h for help
+shift
+goto :options_loop
+:end_options_loop
 
 :::: CPU Architecture
 :: Tested on AMD64
@@ -49,6 +90,11 @@ if "%cpu_arch%"=="AMD64" (
 
 :::: Paths
 :: DO NOT CHANGE THESE UNLESS YOU KNOW WHAT YOU'RE DOING - DOING SO WILL BREAK OTHER SCRIPTS
+
+:: Splice Python version to get install directory C:\Python<version> (e.g. C:\Python311)
+for /f "tokens=1-2 delims=." %%a in ("%python_ver%") do set major=%%a&set minor=%%b
+set py_ver_spliced=%major%%minor%
+
 :: Python building directory
 set PYTHONPATH=%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild
 :: Built Python OpenSSL files directory
