@@ -16,11 +16,11 @@ set base_dir=%USERPROFILE%\NCPA-Building_Python
 :::: Build Options
 :: NOTE: these will be overridden by command line options
 :: install_prereqs              - whether to use Chocolatey to install prerequisites
-:: download_openssl_and_python  - whether to download OpenSSL/Python or use local copies
+:: download_openssl_python  - whether to download OpenSSL/Python or use local copies
 :: build_openssl_python         - whether to build OpenSSL/Python - if false, will use installed Python
 :: build_ncpa                   - whether to build NCPA
 set install_prereqs=true
-set download_openssl_and_python=true
+set download_openssl_python=true
 set build_openssl_python=true
 set build_ncpa=true
 
@@ -94,7 +94,7 @@ goto :invalid
     shift
     goto :options_loop
 :no_download
-    set download_openssl_and_python=false
+    set download_openssl_python=false
     shift
     goto :options_loop
 :no_build
@@ -151,7 +151,7 @@ if "%build_ncpa%"=="true" (
         set PYTHONPATH=C:\Windows\
         set PYEXEPATH=C:\Windows\py.exe
         :: set other build options to false
-        set download_openssl_and_python=false
+        set download_openssl_python=false
         set build_openssl_python=false
     )
 )
@@ -162,7 +162,7 @@ if "%build_ncpa%"=="true" (
 
 echo.
 echo Install Prerequisites?: %install_prereqs%
-echo Download OpenSSL/Python?: %download_openssl_and_python%
+echo Download OpenSSL/Python?: %download_openssl_python%
 echo Build OpenSSL/Python?: %build_openssl_python%
 echo Build NCPA?: %build_ncpa%
 echo.
