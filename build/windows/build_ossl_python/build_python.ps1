@@ -67,13 +67,15 @@ if($build_openssl_python){
     $content = $content -replace '<Target Name="_CopySSLDLL"\s+Inputs="\$\(.*?\)"\s+Outputs="\$\(.*?\)"\s+Condition="\$\(SkipCopySSLDLL\) == ''''"\s+AfterTargets="Build">', '<Target Name="_CopySSLDLL" Inputs="@(_SSLDLL)" Outputs="@(_SSLDLL->''$(OutDir)%(Filename)%(Extension)'')" AfterTargets="Build">'
     $content = $content -replace '<Target Name="_CleanSSLDLL" Condition="\$\(SkipCopySSLDLL\) == ''''" BeforeTargets="Clean">', '<Target Name="_CleanSSLDLL" BeforeTargets="Clean">'
     $content | Set-Content -Path $openssl_props
-} else {
-    Write-Host "`$build_openssl_python `$false, skipping bundling custom OpenSSL"
-}
 
-## 4.3 Build Python
-# Add openssl to build:
-Write-Host "Building Python..."
-cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && $cpython_dir\PCbuild\build.bat -p x64"
-Write-Host $pwd
-if ($LASTEXITCODE -ne 0) { Throw "Error building Python" }
+    ## 4.3 Build Python
+    # Add openssl to build:
+    Write-Host "Building Python..."
+    cmd /c "`"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && $cpython_dir\PCbuild\build.bat -p x64"
+    Write-Host $pwd
+    if ($LASTEXITCODE -ne 0) { Throw "Error building Python" }
+
+    Write-Host "Python build complete"
+} else {
+    Write-Host "Skipping Python build, resorting to installed Python version $installed_version"
+}

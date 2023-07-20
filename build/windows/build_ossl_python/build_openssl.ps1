@@ -27,8 +27,12 @@ if ($build_openssl_python) {
     ## 3.2 Build & Install OpenSSL
     Set-Location $base_dir\openssl-$openssl_ver
     Write-Host "Building and installing OpenSSL..."
-    cmd /c "`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && cmd /k `"`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && nmake && nmake test && nmake install`""
+    cmd /c "`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && perl Configure VC-WIN64A --prefix=$openssl_dir && cmd /c `"`"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\Tools\VsDevCmd.bat`" -arch=amd64 && nmake && nmake test && nmake install`""
     $env:OPENSSL_ROOT_DIR = "$base_url\OpenSSL"
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
     if ($LASTEXITCODE -ne 0) { Throw "Error configuring/building/installing OpenSSL" }
+
+    Write-Host "OpenSSL build complete"
+} else {
+    Write-Host "Skipping OpenSSL build"
 }
