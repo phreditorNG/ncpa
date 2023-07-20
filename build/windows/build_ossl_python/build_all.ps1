@@ -43,9 +43,6 @@ Param(
     [string]$ncpa_build_dir,    # NCPA repo directory
     [string]$base_dir,          # OpenSSL and Python building directory
 
-    [bool]$force_dependencies,  # force install dependencies                    ($true/$false)
-    [bool]$force_downloads      # force download of OpenSSL and Python tarballs ($true/$false)
-
     [bool]$install_prereqs,     # install prerequisites                         ($true/$false)
     [bool]$download_openssl_python, # download OpenSSL and Python tarballs      ($true/$false)
     [bool]$build_openssl_python,    # build OpenSSL and Python                  ($true/$false)
@@ -65,21 +62,16 @@ if (-not (Test-Path -Path $base_dir)) {
 }
 Set-Location $base_dir
 
-$build_w_openssl = $true  # build Python with OpenSSL ($true/$false)
-$download_files  = $true  # download fresh tarballs (OpenSSL/Python) ($true/$false)
-$preserve_files  = $true  # preserve or delete downloaded OpenSSL and Python .tar.gz and .tgz files ($true/$false)
-
-# If OpenSSL is already built/installed in $openssl_dir, give option to not build
-$build_openssl = $false
-if ($build_w_openssl -and $download_files){
+# OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
+if ($build_openssl_python){
     if (Test-Path -Path "$openssl_dir\bin\openssl.exe"){
         $installed_version = & "$openssl_dir\bin\openssl.exe" version
         $installed_version = $installed_version -replace 'OpenSSL\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
-            $build_openssl = $true
+            $build_openssl_python = $true
         }
-    } else { $build_openssl = $true }
+    } else { $build_openssl_python = $true }
 }
 
 ### 1. Chocolatey Script
@@ -96,26 +88,28 @@ $env:Path += ";C:\Program Files\Git\bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin"
 
-### 2. Download and install 7-zip
-if (Test-Path -Path "C:\Program Files\7-Zip"){
-    Write-Host "7-Zip already installed"
-} else {
-    Write-Host "Installing 7-Zip..."
-    $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
-    Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller
-    Start-Process $7ZipInstaller -ArgumentList "/S" -Wait
-    $env:Path += ";C:\Program Files\7-Zip"
-    Remove-Item -Path $7ZipInstaller
-    if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
+if($build_openssl_python) {
+    ### 2. Download and install 7-zip
+    if (Test-Path -Path "C:\Program Files\7-Zip"){
+        Write-Host "7-Zip already installed"
+    } else {
+        Write-Host "Installing 7-Zip..."
+        $7ZipInstaller = "$base_dir\7z$7z_ver.exe"
+        Invoke-WebRequest -Uri https://www.7-zip.org/a/7z$7z_ver.exe -Outfile $7ZipInstaller
+        Start-Process $7ZipInstaller -ArgumentList "/S" -Wait
+        $env:Path += ";C:\Program Files\7-Zip"
+        Remove-Item -Path $7ZipInstaller
+        if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
+    }
+
+    ### 3. Build OpenSSL
+    Write-Host "Running OpenSSL build script..."
+    . $ncpa_build_dir\windows\build_openssl.ps1
+
+    ### 4. Build Python
+    Write-Host "Running Python build script..."
+    . $ncpa_build_dir\windows\build_python.ps1
 }
-
-### 3. Build OpenSSL
-Write-Host "Running OpenSSL build script..."
-. $ncpa_build_dir\windows\build_openssl.ps1
-
-### 4. Build Python
-Write-Host "Running Python build script..."
-. $ncpa_build_dir\windows\build_python.ps1
 
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 refreshenv
