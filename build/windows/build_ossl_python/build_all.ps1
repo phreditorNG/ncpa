@@ -85,10 +85,10 @@ Set-Location $base_dir
 # Store original console colors
 $sysBGColor = [System.Console]::BackgroundColor
 $sysFGColor = [System.Console]::ForegroundColor
-$colorBGmain = "DarkBlue"
-$colorFGmain = "White"
-$colorBGsub = "Black"
-$colorFGsub = "Yellow"
+$colorBGmain = "Black"
+$colorFGmain = "Yellow"
+$colorBGsub = "DarkBlue"
+$colorFGsub = "White"
 
 # OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
 if ($build_openssl_python){
