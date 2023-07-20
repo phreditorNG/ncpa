@@ -30,13 +30,26 @@
 ##### ----------------------------------
 
 ### 0. Script Configuration
-Param(
-    [string]$7z_ver,        # 7-Zip version to install (e.g. 2301-x64)
-    [string]$openssl_ver,   # OpenSSL version to build (e.g. 3.0.8)
-    [string]$python_ver,    # Python version to build (e.g. 3.11.3)
 
-    [string]$ncpa_build_dir,# NCPA repo directory
-    [string]$base_dir       # Custom OpenSSL and Python build directory
+    -install_prereqs %install_prereqs% ^
+    -download_openssl_and_python %download_openssl_and_python% ^
+    -build_openssl_python %build_openssl_python% ^
+    -build_ncpa %build_ncpa%
+Param(
+    [string]$7z_ver,            # 7-Zip version to install  (e.g. 2301-x64)
+    [string]$openssl_ver,       # OpenSSL version to build  (e.g. 3.0.8)
+    [string]$python_ver,        # Python version to build   (e.g. 3.11.3)
+
+    [string]$ncpa_build_dir,    # NCPA repo directory
+    [string]$base_dir,          # OpenSSL and Python building directory
+
+    [bool]$force_dependencies,  # force install dependencies                    ($true/$false)
+    [bool]$force_downloads      # force download of OpenSSL and Python tarballs ($true/$false)
+
+    [bool]$install_prereqs,     # install prerequisites                         ($true/$false)
+    [bool]$download_openssl_python, # download OpenSSL and Python tarballs      ($true/$false)
+    [bool]$build_openssl_python,    # build OpenSSL and Python                  ($true/$false)
+    [bool]$build_ncpa           # build NCPA                                    ($true/$false)
 )
 $openssl_dir = "$base_dir\OpenSSL\"
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
@@ -62,7 +75,7 @@ if ($build_w_openssl -and $download_files){
     if (Test-Path -Path "$openssl_dir\bin\openssl.exe"){
         $installed_version = & "$openssl_dir\bin\openssl.exe" version
         $installed_version = $installed_version -replace 'OpenSSL\s*','' -replace 's*([^\s]*).*','$1'
-        $userInput = Read-Host -Prompt "`nOpenSSL $installed_version already installed. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
+        $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_openssl = $true
         }

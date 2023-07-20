@@ -43,35 +43,53 @@ if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 :::: 3. Build OpenSSL/Python
 :::::::::::::::::::::::
 echo Building OpenSSL/Python
-powershell -File %~dp0\windows\build_ossl_python\build_all.ps1 -ncpa_build_dir %~dp0 -7z_ver %ver_7z% -python_ver %python_ver% -openssl_ver %openssl_ver% -base_dir %base_dir%
+:: build_all.ps1 will:
+:: 1. Install Prerequisites
+:: 2. Download/Build OpenSSL
+:: 3. Download/Build Python
+powershell -File %~dp0\windows\build_ossl_python\build_all.ps1 ^
+    -ncpa_build_dir %~dp0 ^
+:: product versions
+    -7z_ver %ver_7z% ^
+    -python_ver %python_ver% ^
+    -openssl_ver %openssl_ver% ^
+::
+    -base_dir %base_dir% ^
+:: build options
+    -install_prereqs %install_prereqs% ^
+    -download_openssl_and_python %download_openssl_and_python% ^
+    -build_openssl_python %build_openssl_python% ^
+    -build_ncpa %build_ncpa%
 if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 :::::::::::::::::::::::
 :::: 4. Build NCPA with Built Python:
 :::::::::::::::::::::::
 :: i.e. C:\Users\Administrator\NCPA_PYTHON\Python-3.11.3\Python-3.11.3\PCbuild\amd64\py.exe - Built Python Launcher
-echo Building NCPA with Built Python
-set pydir=%PYEXEPATH%
-set python=%PYEXEPATH%
-echo %PYEXEPATH% python version:
-Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
-echo.
+IF %build_ncpa% (
+    echo Building NCPA with Built Python
+    set pydir=%PYEXEPATH%
+    set python=%PYEXEPATH%
+    echo %PYEXEPATH% python version:
+    Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
+    echo.
 
-:: Copy built Python SSL DLLs to installed Python DLLs directory
-echo Copying OpenSSL DLLs to Python DLLs directory
-set ssl_dlls=%PYSSLPATH%\libcrypto-3-x64.dll %PYSSLPATH%\libssl-3-x64.dll %PYSSLPATH%\_ssl.pyd
-for %%i in (%ssl_dlls%) do (
-    echo Copying %%~nxi to %PYDLLPATH%
-    copy %%i %PYDLLPATH%
+    :: Copy built Python SSL DLLs to installed Python DLLs directory
+    echo Copying OpenSSL DLLs to Python DLLs directory
+    set ssl_dlls=%PYSSLPATH%\libcrypto-3-x64.dll %PYSSLPATH%\libssl-3-x64.dll %PYSSLPATH%\_ssl.pyd
+    for %%i in (%ssl_dlls%) do (
+        echo Copying %%~nxi to %PYDLLPATH%
+        copy %%i %PYDLLPATH%
+    )
+    if ERRORLEVEL 1 exit /B %ERRORLEVEL%
+
+    echo Calling %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYTHONPATH%
+    echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
+    echo.
+    @REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
+    Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH%
+    if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 )
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
-
-echo Calling %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYTHONPATH%
-echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
-echo.
-@REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
-Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH%
-if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 :::::::::::::::::::::::
 :::: 5. Restore original execution policy
