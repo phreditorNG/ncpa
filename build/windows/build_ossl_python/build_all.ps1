@@ -87,7 +87,7 @@ $sysBGColor = [System.Console]::BackgroundColor
 $sysFGColor = [System.Console]::ForegroundColor
 $colorBGmain = "Black"
 $colorFGmain = "Yellow"
-$colorBGsub = "DarkBlue"
+$colorBGsub = "Black"
 $colorFGsub = "White"
 
 # OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
