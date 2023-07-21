@@ -22,6 +22,8 @@ if (-not $download_files){
 
 ### 1. Install Chocolatey
 try {
+    Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
+    refreshenv
     choco -v
     Write-Host "Chocolatey already installed, passing..."
 } catch {
