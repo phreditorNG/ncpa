@@ -30,6 +30,10 @@ if($build_python){
     Write-Host "Extracting $python_tar_extracted"
     Start-Process -FilePath $7zextractor -ArgumentList "x `"$python_tar_extracted`" `-o`"$base_dir\Python-$python_ver`" -y" -Wait
 
+    if ($LASTEXITCODE -ne 0) { Throw "Error extracting Python-$python_ver.tgz" }
+    # Wait for file system to catch up
+    Start-Sleep -Seconds 15
+
     ## 4.2 Add custom OpenSSL to the Python build
     # 4.2.0 Copy OpenSSL files from
     #   $base_url\OpenSSL
