@@ -59,6 +59,8 @@ $download_openssl_python = $download_openssl_python -eq "true"
 $build_openssl_python = $build_openssl_python -eq "true"
 $build_ncpa = $build_ncpa -eq "true"
 
+$build_openssl = $build_openssl_python
+$build_python = $build_openssl_python
 if ($build_openssl_python){
     $build_openssl = $true
     $build_python = $true
