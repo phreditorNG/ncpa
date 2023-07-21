@@ -32,9 +32,9 @@ Option 1::
 Option 2::
 
   Install Git for Windows: https://git-scm.com/download/win
-  Open Git Bash (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH)
+  Open Git Bash (or cmd.exe with `C:\Program Files\Git\usr\bin` added to your PATH)
   Navigate to your desired build directory
-  Run the following command: ``git clone https://github.com/NagiosEnterprises/ncpa.git``
+  Run the following command: `git clone https://github.com/NagiosEnterprises/ncpa.git`
 
 Run the build script:
 ----------
