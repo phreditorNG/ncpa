@@ -17,54 +17,36 @@ THE BUILD SCRIPT WILL MAKE CHANGES TO THE SYSTEM THAT MAY BE INCOMPATIBLE WITH O
 Building on Windows
 ===================
 
-**Prerequisites for Windows** (Installing some of these prerequisites requires admin rights)
--------------------------
-
-* `Git for Windows <https://git-scm.com/download/win>`_
-* `Python 3.11.x <https://www.python.org/downloads/>`_
-* `NSIS 3 <http://nsis.sourceforge.net/Download>`_
-
-Configure the Windows Build Environment
--------------------------------
-
-Install Prerequisites
-~~~~~~~~~~~~~~~~~~~~~
-
-* Git
-
-  1. Download and install Git for Windows. (`see prerequisites <#prerequisites>`_)
-
-* Python
-
-  1. Download and install Python 3.x. (`see prerequisites <#prerequisites>`_)
-  2. Execute the installer as usual, making sure to check the box to add Python to your PATH (on the first page).
-
-* NSIS
-
-  1. Download and run the installer. (`see prerequisites <https://github.com/NagiosEnterprises/ncpa/blob/master/BUILDING.rst#prerequisites>`_)
-
-* pip
-
-  * Pip is installed alongside python by default but should be updated before continuing::
-
-      py -m pip install --upgrade pip
-
-Note: py should be the command to run python 3. If it is not, you may need to use the full path to the python executable.
-
-Build NCPA
+Download the NCPA repository from GitHub
 ----------
 
-In your Git Bash terminal (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH), run the following commands:
+There are two ways to download the NCPA repository from GitHub. The first is to download the repository as a zip file. The second is to use Git to clone the repository. The second method is preferred as it allows you to easily update the repository in the future.
 
-Navigate to your desired build directory and clone the repository::
+Option 1:
+~~~~~~~~~
+::
+  Go to the NCPA repository on GitHub: https://github.com/NagiosEnterprises/ncpa
+  Click the green "<> Code" button
+  Click "Download ZIP"
+  Extract the ZIP file to your desired build directory
 
-  cd /c/desired/build/directory
-  git clone https://github.com/NagiosEnterprises/ncpa.git
+Option 2:
+~~~~~~~~~
+::
+  Install Git for Windows: https://git-scm.com/download/win
+  Open Git Bash (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH)
+  Navigate to your desired build directory
+  Run the following command: ``git clone https://github.com/NagiosEnterprises/ncpa.git``
 
-In a Command Prompt/Terminal (cmd.exe) terminal with admin rights, run the following commands::
+Run the build script:
+----------
 
-  cd C:\desired\build\directory\ncpa
-  py build\build_windows.py
+In a Command Prompt/Terminal (cmd.exe) terminal with administrator privileges, navigate to the ncpa repository
+
+run the following commands:
+
+  cd C:\desired\build\directory\ncpa\build
+  build_windows.bat
 
 This will create a file called ``ncpa-<version>.exe`` in the ``build`` directory.
 This is the installer for NCPA and can be used to install NCPA on a Windows system.
