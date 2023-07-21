@@ -2,7 +2,7 @@
 # navigate to the OpenSSL/Python building directory
 Set-Location $base_dir
 ## 3.0 Download OpenSSL
-if($download_openssl_python){
+if($download_openssl){
     Write-Host "Downloading OpenSSL..."
     Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }

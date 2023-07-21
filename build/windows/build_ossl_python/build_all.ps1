@@ -109,7 +109,7 @@ if ($build_python){
         $built_version = $built_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nBuild Python $built_version build detected with OpenSSL version $built_py_ssl. Do you want to download/build Python version $python_ver with OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
-            $download_openssl_python = $true
+            $download_openssl = $true
             $build_python = $true
         } else { $build_python = $false }
     } elseif (Test-Path -Path "C:\Windows\py.exe"){
@@ -118,7 +118,7 @@ if ($build_python){
         $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nInstalled Python $installed_version build detected with OpenSSL version $installed_py_ssl. Do you want to download/build Python version $python_ver with OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
-            $download_openssl_python = $false
+            $download_python = $false
             $build_python = $false
         } else { $build_python = $true }
     } else {
