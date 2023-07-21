@@ -39,6 +39,10 @@ if exist "%base_dir%\Python-%python_ver%\Python-%python_ver%\PCbuild\amd64\py.ex
 if "%~1"=="" goto :end_options_loop
 if "%~1"=="-h" (
     echo.
+    echo NCPA Windows Build Script
+    echo.
+    echo NOTE: THESE OPTIONS ARE NOT SUPPORTED YET
+    echo.
     echo        ---------------------------
     echo Usage: build_windows.bat [options]
     echo        ---------------------------

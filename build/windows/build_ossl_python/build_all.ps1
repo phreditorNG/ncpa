@@ -51,7 +51,7 @@ $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
 # remove last character (\) from $ncpa_build_dir
 $ncpa_build_dir = $ncpa_build_dir.Substring(0, $ncpa_build_dir.Length - 1)
 $build_ossl_python_dir = "$ncpa_build_dir\windows\build_ossl_python"
-$7xextractor = "C:\Program Files\7-Zip\7z.exe"
+$7zextractor = "C:\Program Files\7-Zip\7z.exe"
 
 # Convert boolean string params to boolean (batch doesn't HAVE booleans)
 $install_prereqs = $install_prereqs -eq "true"
