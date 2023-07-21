@@ -58,6 +58,11 @@ $download_openssl_python = $download_openssl_python -eq "true"
 $build_openssl_python = $build_openssl_python -eq "true"
 $build_ncpa = $build_ncpa -eq "true"
 
+if ($build_openssl_python){
+    $build_openssl = $true
+    $build_python = $true
+}
+
 Write-Host "test param: $test_param"
 
 Write-Host "Powershell received parameters:"
@@ -91,27 +96,27 @@ $colorBGsub = "DarkBlue"
 $colorFGsub = "White"
 
 # OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
-if ($build_openssl_python){
+if ($build_openssl){
     if (Test-Path -Path "$openssl_dir\bin\openssl.exe"){
         $installed_version = & "$openssl_dir\bin\openssl.exe" version
         $installed_version = $installed_version -replace 'OpenSSL\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
-            $build_openssl_python = $true
+            $build_openssl = $true
         }
-    } else { $build_openssl_python = $true }
+    } else { $build_openssl = $true }
 }
 # Offer to not build Python again
-if ($build_openssl_python){
+if ($build_python){
     if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe"){
         $installed_version = & "C:\Windows\py.exe" -c "import sys; print(sys.version)"
         $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
         $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build Python version $python_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
-            $build_openssl_python = $true
+            $build_python = $true
         }
     } else { Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe"
-        $build_openssl_python = $true }
+        $build_python = $true }
 }
 
 ### 1. Chocolatey Script

@@ -11,7 +11,7 @@ if($download_files){
     Start-Sleep -Seconds 30
 }
 
-if ($build_openssl_python) {
+if ($build_openssl) {
     ## 3.1 Extract OpenSSL
     Write-Host "Extracting OpenSSL..."
     $openssl_tar = "$base_dir\openssl-$openssl_ver.tar.gz"

@@ -11,7 +11,7 @@ if ($download_files){
     Start-Sleep -Seconds 30
 }
 
-if($build_openssl_python){
+if($build_python){
     ## 4.1 Extract Python
     Write-Host "Extracting Python..."
     $python_tar = "$base_dir\Python-$python_ver.tgz"
