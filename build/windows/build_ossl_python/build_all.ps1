@@ -145,7 +145,7 @@ Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
 $env:Path += ";C:\Program Files\NASM"
 $env:Path += ";C:\Program Files\Git\bin"
-$env:Path += ";C:\Program Files\NSIS"
+$env:Path += ";C:\Program Files\NSIS" # it should only be in Program Files (x86) but I want to be sure it's in the path
 $env:Path += ";C:\Program Files (x86)\NSIS"
 # $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin"
@@ -168,7 +168,7 @@ if($build_openssl_python) {
         if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
 
         # Wait for file system to catch up
-        Start-Sleep -Seconds 15
+        Start-Sleep -Seconds 5
     }
 
     ### 3. Build OpenSSL - always called, build_openssl.ps1 will check if it needs to build

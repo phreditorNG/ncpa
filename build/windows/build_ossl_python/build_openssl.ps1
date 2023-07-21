@@ -8,7 +8,7 @@ if($download_files){
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
 
     # Wait for file system to catch up
-    Start-Sleep -Seconds 15
+    Start-Sleep -Seconds 5
 }
 
 if ($build_openssl) {

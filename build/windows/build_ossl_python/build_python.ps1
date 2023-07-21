@@ -8,7 +8,7 @@ if ($download_files){
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading Python to $base_dir" }
 
     # Wait for file system to catch up
-    Start-Sleep -Seconds 15
+    Start-Sleep -Seconds 5
 }
 
 if($build_python){
@@ -32,7 +32,7 @@ if($build_python){
 
     if ($LASTEXITCODE -ne 0) { Throw "Error extracting Python-$python_ver.tgz" }
     # Wait for file system to catch up
-    Start-Sleep -Seconds 15
+    Start-Sleep -Seconds 10
 
     ## 4.2 Add custom OpenSSL to the Python build
     # 4.2.0 Copy OpenSSL files from
