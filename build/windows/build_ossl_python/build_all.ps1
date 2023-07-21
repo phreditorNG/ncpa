@@ -153,6 +153,9 @@ if($build_openssl_python) {
         $env:Path += ";C:\Program Files\7-Zip"
         Remove-Item -Path $7ZipInstaller
         if ($LASTEXITCODE -ne 0) { Throw "Error downloading or installing 7-Zip to $base_dir" }
+
+        # Wait for file system to catch up
+        Start-Sleep -Seconds 15
     }
 
     ### 3. Build OpenSSL - always called, build_openssl.ps1 will check if it needs to build

@@ -6,6 +6,9 @@ if($download_files){
     Write-Host "Downloading OpenSSL..."
     Invoke-WebRequest -Uri https://www.openssl.org/source/openssl-$openssl_ver.tar.gz -OutFile $base_dir\openssl-$openssl_ver.tar.gz -ErrorAction Stop
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
+
+    # Wait for file system to catch up
+    Start-Sleep -Seconds 30
 }
 
 if ($build_openssl_python) {

@@ -7,20 +7,23 @@ if ($download_files){
     Invoke-WebRequest -Uri https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz -OutFile $base_dir\Python-$python_ver.tgz -ErrorAction Stop
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading Python to $base_dir" }
 
+    # Wait for file system to catch up
+    Start-Sleep -Seconds 30
+}
+
+if($build_openssl_python){
     ## 4.1 Extract Python
     Write-Host "Extracting Python..."
     $python_tar = "$base_dir\Python-$python_ver.tgz"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$python_tar`" `-o`"$base_dir`" -y" -Wait
     $python_tar_extracted = $python_tar -replace '\.tgz$', '.tar'
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$python_tar_extracted`" `-o`"$base_dir\Python-$python_ver`" -y" -Wait
-}
 
-## 4.2 Add custom OpenSSL to the Python build
-# 4.2.0 Copy OpenSSL files from
-#   $base_url\OpenSSL
-#     to
-#   $base_url\Python-$python_ver\Python-$python_ver\externals\openssl-bin-version\your_cpu_architecture
-if($build_openssl_python){
+    ## 4.2 Add custom OpenSSL to the Python build
+    # 4.2.0 Copy OpenSSL files from
+    #   $base_url\OpenSSL
+    #     to
+    #   $base_url\Python-$python_ver\Python-$python_ver\externals\openssl-bin-version\your_cpu_architecture
     Write-Host "Copying custom OpenSSL to Python build externals"
     Copy-Item -Path "$base_dir\OpenSSL\include\openssl\applink.c" -Destination "$base_dir\OpenSSL\include\applink.c" -Force
     $cpu_arch = [System.Environment]::GetEnvironmentVariable("PROCESSOR_ARCHITECTURE")
