@@ -104,7 +104,9 @@ if ERRORLEVEL 1 goto :restore_policy
 :::: 4. Build NCPA with Built Python:
 :::::::::::::::::::::::
 :: i.e. C:\Users\Administrator\NCPA_PYTHON\Python-3.11.3\Python-3.11.3\PCbuild\amd64\py.exe - Built Python Launcher
-IF %build_ncpa% (
+:: if build_ncpa is true, print python version and build NCPA
+if "%build_ncpa%"=="" set build_ncpa=true
+IF "%build_ncpa%"=="true" (
     echo Building NCPA with Built Python
     set pydir=%PYEXEPATH%
     set python=%PYEXEPATH%
