@@ -8,12 +8,20 @@ if ($download_files){
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading Python to $base_dir" }
 
     # Wait for file system to catch up
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 15
 }
 
 if($build_python){
     ## 4.1 Extract Python
     Write-Host "Extracting Python..."
+    #verify that the Python tar file exists
+    if (-not (Test-Path -Path "$base_dir\Python-$python_ver.tgz")) {
+        Throw "Python tar file does not exist: $base_dir\Python-$python_ver.tgz"
+    }
+    # verify 7zextractor exists
+    if (-not (Test-Path -Path $7zextractor)) {
+        Throw "7z.exe not found: $7zextractor"
+    }
     $python_tar = "$base_dir\Python-$python_ver.tgz"
     Write-Host "Extracting $python_tar"
     Start-Process -FilePath $7zextractor -ArgumentList "x `"$python_tar`" `-o`"$base_dir`" -y" -Wait

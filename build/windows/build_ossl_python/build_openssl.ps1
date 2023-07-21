@@ -8,12 +8,20 @@ if($download_files){
     if ($LASTEXITCODE -ne 0) { Throw "Error downloading OpenSSL to $base_dir" }
 
     # Wait for file system to catch up
-    Start-Sleep -Seconds 30
+    Start-Sleep -Seconds 15
 }
 
 if ($build_openssl) {
     ## 3.1 Extract OpenSSL
     Write-Host "Extracting OpenSSL..."
+    #verify that the OpenSSL tar file exists
+    if (-not (Test-Path -Path "$base_dir\openssl-$openssl_ver.tar.gz")) {
+        Throw "OpenSSL tar file does not exist: $base_dir\openssl-$openssl_ver.tar.gz"
+    }
+    # verify 7zextractor exists
+    if (-not (Test-Path -Path $7zextractor)) {
+        Throw "7z.exe not found: $7zextractor"
+    }
     $openssl_tar = "$base_dir\openssl-$openssl_ver.tar.gz"
     Write-Host "Extracting $openssl_tar"
     Start-Process -FilePath $7zextractor -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
