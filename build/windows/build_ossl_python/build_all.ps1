@@ -102,6 +102,8 @@ if ($build_openssl){
     } else { $build_openssl = $true }
 }
 # Offer to not build Python if found installed version
+$download_openssl = $download_openssl_python
+$download_python = $download_openssl_python
 if ($build_python){
     if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe") {
         $built_version = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import sys; print(sys.version)"
