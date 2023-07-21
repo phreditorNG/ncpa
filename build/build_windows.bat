@@ -64,7 +64,7 @@ goto :options_loop
 :::::::::::::::::::::::
 echo Configuring build
 call %~dp0\windows\build_config.bat %build_options%
-if ERRORLEVEL 1 goto :restore_policy
+if ERRORLEVEL 1 exit /B %ERRORLEVEL%
 
 :::::::::::::::::::::::
 :::: 2. Set execution policy to allow running powershell scripts
