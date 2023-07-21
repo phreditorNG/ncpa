@@ -1,7 +1,7 @@
 ### 4. Build Python
 # Note: $cpython_dir is $base_dir\Python-$python_ver\Python-$python_ver\
 
-if ($download_files){
+if ($download_openssl_python){
     ## 4.0 Download Python
     Write-Host "Downloading Python..."
     Invoke-WebRequest -Uri https://www.python.org/ftp/python/$python_ver/Python-$python_ver.tgz -OutFile $base_dir\Python-$python_ver.tgz -ErrorAction Stop
