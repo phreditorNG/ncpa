@@ -32,7 +32,9 @@ if ($build_openssl_python) {
     $env:OPENSSL_DIR = "$base_url\OpenSSL"
     if ($LASTEXITCODE -ne 0) { Throw "Error configuring/building/installing OpenSSL" }
 
+    Write-Host "----------------------------------------"
     Write-Host "OpenSSL build complete"
+    Write-Host "----------------------------------------"
 } else {
     Write-Host "Skipping OpenSSL build"
 }

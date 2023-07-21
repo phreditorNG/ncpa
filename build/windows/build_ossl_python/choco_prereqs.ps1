@@ -45,5 +45,9 @@ if(-not (Get-Command python -ErrorAction SilentlyContinue)){ choco install pytho
 choco install visualstudio2022buildtools -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
 choco install visualstudio2022community -y --package-parameters "--add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 --add Microsoft.VisualStudio.Component.Windows10SDK.19041 --add Microsoft.VisualStudio.Component.Windows10SDK.18362"
 
+Write-Host "----------------------------------------"
+Write-Host "Chocolatey install script complete"
+Write-Host "----------------------------------------"
+
 Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
 refreshenv

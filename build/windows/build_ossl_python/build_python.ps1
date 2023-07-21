@@ -75,7 +75,9 @@ if($build_openssl_python){
     Write-Host $pwd
     if ($LASTEXITCODE -ne 0) { Throw "Error building Python" }
 
+    Write-Host "----------------------------------------"
     Write-Host "Python build complete"
+    Write-Host "----------------------------------------"
 } else {
     Write-Host "Skipping Python build, resorting to installed Python version $installed_version"
 }
