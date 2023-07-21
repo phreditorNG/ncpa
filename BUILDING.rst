@@ -22,17 +22,13 @@ Download the NCPA repository from GitHub
 
 There are two ways to download the NCPA repository from GitHub. The first is to download the repository as a zip file. The second is to use Git to clone the repository. The second method is preferred as it allows you to easily update the repository in the future.
 
-Option 1:
-~~~~~~~~~
-::
+Option 1::
   Go to the NCPA repository on GitHub: https://github.com/NagiosEnterprises/ncpa
   Click the green "<> Code" button
   Click "Download ZIP"
   Extract the ZIP file to your desired build directory
 
-Option 2:
-~~~~~~~~~
-::
+Option 2::
   Install Git for Windows: https://git-scm.com/download/win
   Open Git Bash (or cmd.exe with ``C:\Program Files\Git\usr\bin`` added to your PATH)
   Navigate to your desired build directory
