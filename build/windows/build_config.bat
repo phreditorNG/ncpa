@@ -90,18 +90,22 @@ if "%~1"=="-no_ncpa"     goto :no_ncpa
 if "%~1"=="-nn"          goto :no_ncpa
 goto :invalid
 :no_prereqs
-    set install_prereqs=false
-    shift
-    goto :options_loop
+echo Skipping Prerequisites
+set install_prereqs=false
+shift
+goto :end_options_loop
 :no_download
+    echo Skipping Download
     set download_openssl_python=false
     shift
     goto :options_loop
 :no_build
+    echo Skipping OSSL/Python Build
     set build_openssl_python=false
     shift
     goto :options_loop
 :no_ncpa
+    echo Skipping NCPA Build
     set build_ncpa=false
     shift
     goto :options_loop
@@ -171,7 +175,6 @@ if "%build_ncpa%"=="true" (
     if "%build_openssl_python%"=="true" (
         echo Building NCPA with Built Python
         echo Openssl/Python Build Directory: %base_dir%
-        echo OpenSSL/Python already built?: %ossl_python_already_built%
         echo Building OpenSSL/Python?: %build_openssl_python%
         echo Building NCPA?: %build_ncpa%
         goto :show_versions

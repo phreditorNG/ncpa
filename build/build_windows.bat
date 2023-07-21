@@ -16,17 +16,15 @@ goto endFileDoc
 :: 4. Build NCPA (ncpa\build\windows\build_ncpa.py)
 :: 5. Restore original execution policy
 ::
-:: TODO: Add parameters to allow for customizing the build
-::  (with pre-built OpenSSL/Python)
-:: TODO: Add support for building NCPA with a pre-built OpenSSL
-:: TODO: Add support for building NCPA with a pre-built Python - Allow building with official Python releases (will have OSSL 3 soon)
+::
+:: TODO: Add better support for building NCPA with a pre-built Python - Allow building with official Python releases (will have OSSL 3 soon)
 :endFileDoc
 
 setlocal
 
 :::: Take options from command line to pass to build_config.ps1
+:: TODO: add only- options to run just one part of the script
 :options_loop
-echo option: %~1
 set "build_options="
 if "%~1"=="" goto :end_options_loop
 if "%~1"=="-np"          goto :no_prereqs
