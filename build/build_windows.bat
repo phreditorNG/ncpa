@@ -23,7 +23,8 @@ goto endFileDoc
 setlocal
 
 :::: Take options from command line to pass to build_config.ps1
-:: TODO: add only- options to run just one part of the script
+:: TODO: add -only-[p/prereqs/d/download/b/build_openssl_python/n/build_ncpa] options to run just one part of the script
+:: TODO: add -skip-tests option
 :options_loop
 set "build_options="
 if "%~1"=="" goto :end_options_loop
