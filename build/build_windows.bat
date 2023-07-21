@@ -108,8 +108,8 @@ IF %build_ncpa% (
     echo Building NCPA with Built Python
     set pydir=%PYEXEPATH%
     set python=%PYEXEPATH%
-    echo %PYEXEPATH% python version:
-    Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print(ssl.OPENSSL_VERSION)"
+    echo Building NCPA with python version:
+    Call %PYEXEPATH% -c "import sys; print(sys.version); import ssl; print('OpenSSL version:'); print(ssl.OPENSSL_VERSION)"
     echo.
 
     :: Copy built Python SSL DLLs to installed Python DLLs directory
@@ -124,7 +124,7 @@ IF %build_ncpa% (
     echo Calling %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYTHONPATH%
     echo NOTE: This will take a while... You can check ncpa\build\build_ncpa.log for progress
     echo.
-    @REM Call %PYEXEPATH% .\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
+    @REM Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH% > build_ncpa.log
     Call %PYEXEPATH% %~dp0\windows\build_ncpa.py %PYEXEPATH%
     if ERRORLEVEL 1 goto :restore_policy
 )

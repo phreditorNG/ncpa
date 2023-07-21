@@ -101,17 +101,28 @@ if ($build_openssl){
         } else { $build_openssl = $false }
     } else { $build_openssl = $true }
 }
-# Offer to not build Python again
+# Offer to not build Python if found installed version
 if ($build_python){
-    if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe"){
-        $installed_version = & "C:\Windows\py.exe" -c "import sys; print(sys.version)"
-        $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
-        $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build Python version $python_ver`? `n(y/n)"
+    if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe") {
+        $built_version = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import sys; print(sys.version)"
+        $built_py_ssl = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import ssl; print(ssl.OPENSSL_VERSION)"
+        $built_version = $built_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
+        $userInput = Read-Host -Prompt "`nBuild Python $built_version build detected with OpenSSL version $built_py_ssl. Do you want to download/build Python version $python_ver with OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_python = $true
         } else { $build_python = $false }
-    } else { Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe"
-        $build_python = $true }
+    } elseif (Test-Path -Path "C:\Windows\py.exe"){
+        $installed_version = & "C:\Windows\py.exe" -c "import sys; print(sys.version)"
+        $installed_py_ssl = & "C:\Windows\py.exe" -c "import ssl; print(ssl.OPENSSL_VERSION)"
+        $installed_version = $installed_version -replace 'Python\s*','' -replace 's*([^\s]*).*','$1'
+        $userInput = Read-Host -Prompt "`nInstalled Python $installed_version build detected with OpenSSL version $installed_py_ssl. Do you want to download/build Python version $python_ver with OpenSSL version $openssl_ver`? `n(y/n)"
+        if ($userInput -eq "yes" -or $userInput -eq "y"){
+            $build_python = $false
+        } else { $build_python = $true }
+    } else {
+        Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe or C:\Windows\py.exe, building Python"
+        $build_python = $true
+    }
 }
 
 ### 1. Chocolatey Script
