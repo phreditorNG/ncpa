@@ -145,6 +145,8 @@ Write-Host "Adding prerequisites to PATH"
 $env:Path += ";C:\Strawberry\perl\bin"
 $env:Path += ";C:\Program Files\NASM"
 $env:Path += ";C:\Program Files\Git\bin"
+$env:Path += ";C:\Program Files\NSIS"
+$env:Path += ";C:\Program Files (x86)\NSIS"
 # $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin"
 $env:Path += ";C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin"
 
