@@ -31,7 +31,6 @@
 
 ### 0. Script Configuration
 Param(
-    [string]$test_param,
     [string]$7z_ver,            # 7-Zip version to install  (e.g. 2301-x64)
     [string]$openssl_ver,       # OpenSSL version to build  (e.g. 3.0.8)
     [string]$python_ver,        # Python version to build   (e.g. 3.11.3)
@@ -60,8 +59,6 @@ $build_ncpa = $build_ncpa -eq "true"
 
 $build_openssl = $build_openssl_python
 $build_python = $build_openssl_python
-
-Write-Host "test param: $test_param"
 
 Write-Host "Powershell received parameters:"
 Write-Host "  7z_ver:               $7z_ver"
@@ -101,7 +98,7 @@ if ($build_openssl){
         $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_openssl = $true
-        }
+        } else { $build_openssl = $false }
     } else { $build_openssl = $true }
 }
 # Offer to not build Python again
@@ -112,7 +109,7 @@ if ($build_python){
         $userInput = Read-Host -Prompt "`nPython $installed_version build detected at $cpython_dir. Do you want to download/build Python version $python_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_python = $true
-        }
+        } else { $build_python = $false }
     } else { Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe"
         $build_python = $true }
 }
