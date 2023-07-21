@@ -39,9 +39,7 @@ Option 2::
 Run the build script:
 ----------
 
-In a Command Prompt/Terminal (cmd.exe) terminal with administrator privileges, navigate to the ncpa repository
-
-run the following commands:
+In a Command Prompt/Terminal (cmd.exe) terminal with administrator privileges, navigate to the ncpa repository's build folder and run `build_windows.bat`::
 
   cd C:\desired\build\directory\ncpa\build
   build_windows.bat
