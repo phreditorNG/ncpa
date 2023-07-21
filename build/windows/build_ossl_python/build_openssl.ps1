@@ -18,14 +18,9 @@ if ($build_openssl_python) {
     Write-Host "Extracting $openssl_tar"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
     $openssl_tar_extracted = ($openssl_tar -replace '.tar.gz', '.tar')
-    Write-Host "Extracting $tar2"
+    Write-Host "Extracting $openssl_tar_extracted"
     Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
     if ($LASTEXITCODE -ne 0) { Throw "Error extracting openssl-$openssl_ver.tar.gz" }
-
-    if (-not $preserve_files){
-        Remove-Item -Path $openssl_tar, ($openssl_tar -replace '\.tar.gz', '.tar')
-    }
-    if ($LASTEXITCODE -ne 0) { Throw "Error removing OpenSSL files" }
 
     ## 3.2 Build & Install OpenSSL
     Set-Location $base_dir\openssl-$openssl_ver
