@@ -16,10 +16,10 @@ if ($build_openssl) {
     Write-Host "Extracting OpenSSL..."
     $openssl_tar = "$base_dir\openssl-$openssl_ver.tar.gz"
     Write-Host "Extracting $openssl_tar"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
+    Start-Process -FilePath $7zextractor -ArgumentList "x `"$openssl_tar`" `-o`"$base_dir`" -y" -Wait
     $openssl_tar_extracted = ($openssl_tar -replace '.tar.gz', '.tar')
     Write-Host "Extracting $openssl_tar_extracted"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
+    Start-Process -FilePath $7zextractor -ArgumentList "x `"$openssl_tar_extracted`" `-o`"$base_dir`" -y" -Wait
     if ($LASTEXITCODE -ne 0) { Throw "Error extracting openssl-$openssl_ver.tar.gz" }
 
     ## 3.2 Build & Install OpenSSL

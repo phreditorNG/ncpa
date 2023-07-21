@@ -16,11 +16,11 @@ if($build_python){
     Write-Host "Extracting Python..."
     $python_tar = "$base_dir\Python-$python_ver.tgz"
     Write-Host "Extracting $python_tar"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$python_tar`" `-o`"$base_dir`" -y" -Wait
+    Start-Process -FilePath $7zextractor -ArgumentList "x `"$python_tar`" `-o`"$base_dir`" -y" -Wait
 
     $python_tar_extracted = $python_tar -replace '\.tgz$', '.tar'
     Write-Host "Extracting $python_tar_extracted"
-    Start-Process -FilePath '7z.exe' -ArgumentList "x `"$python_tar_extracted`" `-o`"$base_dir\Python-$python_ver`" -y" -Wait
+    Start-Process -FilePath $7zextractor -ArgumentList "x `"$python_tar_extracted`" `-o`"$base_dir\Python-$python_ver`" -y" -Wait
 
     ## 4.2 Add custom OpenSSL to the Python build
     # 4.2.0 Copy OpenSSL files from

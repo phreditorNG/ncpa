@@ -17,7 +17,9 @@ THE BUILD SCRIPT WILL MAKE CHANGES TO THE SYSTEM THAT MAY BE INCOMPATIBLE WITH O
 Building on Windows
 ===================
 
-Download the NCPA repository from GitHub
+NOTE: The built NCPA agent will work on Windows server 2012 R2 and newer, but this build script will only work on Windows 10/Windows Server 2016 or newer.
+
+Step 1: Download the NCPA repository from GitHub
 ----------
 
 There are two ways to download the NCPA repository from GitHub. The first is to download the repository as a zip file. The second is to use Git to clone the repository. The second method is preferred as it allows you to easily update the repository in the future.
@@ -36,15 +38,17 @@ Option 2::
   Navigate to your desired build directory
   Run the following command: `git clone https://github.com/NagiosEnterprises/ncpa.git`
 
-Run the build script:
+Step 2: Run the build script:
 ----------
 
-In a Command Prompt/Terminal (cmd.exe) terminal with administrator privileges, navigate to the ncpa repository's build folder and run `build_windows.bat`::
+In a Command Prompt/Terminal (cmd.exe) terminal with administrator privileges, navigate to the ncpa repository's `build` folder and run `build_windows.bat`::
 
   cd C:\desired\build\directory\ncpa\build
   build_windows.bat
 
-This will create a file called ``ncpa-<version>.exe`` in the ``build`` directory.
+NOTE: It is likely that the script will ask you to restart after updating .NET framework. If this happens, restart your computer and run the script again.
+
+This script will create a file called ``ncpa-<version>.exe`` in the ``build`` directory.
 This is the installer for NCPA and can be used to install NCPA on a Windows system.
 
 
