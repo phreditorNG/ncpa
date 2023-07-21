@@ -40,19 +40,24 @@ if "%~1"=="-no_ncpa"     goto :no_ncpa
 
 if "%~1"=="-h" (
     set "build_options=-h"
+    shift
     goto :end_options_loop
 )
 :no_prereqs
     set "build_options=%build_options% -no_prereqs"
+    shift
     goto :options_loop
 :no_download
     set "build_options=%build_options% -no_download"
+    shift
     goto :options_loop
 :no_build
     set "build_options=%build_options% -no_build"
+    shift
     goto :options_loop
 :no_ncpa
     set "build_options=%build_options% -no_ncpa"
+    shift
     goto :options_loop
 echo Invalid option: %~1, use -h for help
 shift
