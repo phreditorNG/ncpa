@@ -111,8 +111,8 @@ sys.path.append(os.getcwd())
 
 console_colors.set_colors(0x0B) # Lighter Blue on Black
 print("Freezing with cx_Freeze")
-print("you can track progress in ncpa\\build\\cxFreeze_build.log")
-print("Python launcher:", python_launcher)
+# print("you can track progress in ncpa\\build\\cxFreeze_build.log")
+# print("Python launcher:", python_launcher)
 ## opt 1: run in console:
 subprocess.Popen([python_launcher, 'setup.py', 'build_exe']).wait()
 ## opt 2: run with logging:
