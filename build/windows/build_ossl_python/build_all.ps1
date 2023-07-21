@@ -164,6 +164,7 @@ if($build_openssl_python) {
     Write-Host "Running OpenSSL build script..."
     [System.Console]::BackgroundColor = $colorBGsub
     [System.Console]::ForegroundColor = $colorFGsub
+    Write-Host "`$build_openssl: $build_openssl"
     . $build_ossl_python_dir\build_openssl.ps1
 
     ### 4. Build Python - always called, build_python.ps1 will check if it needs to build
@@ -172,6 +173,7 @@ if($build_openssl_python) {
     Write-Host "Running Python build script..."
     [System.Console]::BackgroundColor = $colorBGsub
     [System.Console]::ForegroundColor = $colorFGsub
+    Write-Host "`$build_python: $build_python"
     . $build_ossl_python_dir\build_python.ps1
 }
 
