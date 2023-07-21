@@ -48,10 +48,9 @@ Param(
 )
 $openssl_dir = "$base_dir\OpenSSL\"
 $cpython_dir = "$base_dir\Python-$python_ver\Python-$python_ver\"
-# remove last character (\) from $ncpa_build_dir
-$ncpa_build_dir = $ncpa_build_dir.Substring(0, $ncpa_build_dir.Length - 1)
+$ncpa_build_dir = $ncpa_build_dir.Substring(0, $ncpa_build_dir.Length - 1) # remove last character (\) from $ncpa_build_dir
 $build_ossl_python_dir = "$ncpa_build_dir\windows\build_ossl_python"
-$7zextractor = "C:\Program Files\7-Zip\7z.exe" # where 7z.exe will be installed
+$7zextractor = "C:\Program Files\7-Zip\7z.exe" # where 7z.exe will be installed, used in OpenSSL and Python build scripts
 
 # Convert boolean string params to boolean (batch doesn't HAVE booleans)
 $install_prereqs = $install_prereqs -eq "true"

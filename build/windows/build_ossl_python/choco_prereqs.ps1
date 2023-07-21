@@ -9,17 +9,6 @@
 # Force PowerShell to use TLS 1.2
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-if (-not $download_files){
-    if (-not (Test-Path -Path "$base_url\OpenSSL")){ # check ssl
-        Write-Host "OpenSSL not found in $base_url\OpenSSL, setting `$download_files to $true"
-        $download_files = $true
-    }
-    if (-not (Test-Path -Path "$base_url\Python-$python_ver")){
-        Write-Host "Python not found in $base_url\Python-$python_ver, setting `$download_files to $true"
-        $download_files = $true
-    }
-}
-
 ### 1. Install Chocolatey
 try {
     Import-Module $env:ChocolateyInstall\helpers\chocolateyProfile.psm1
