@@ -41,7 +41,7 @@ if "%~1"=="-h" (
     echo.
     echo NCPA Windows Build Script
     echo.
-    echo NOTE: THESE OPTIONS ARE NOT SUPPORTED YET
+    echo NOTE: THESE OPTIONS ARE NOT YET SUPPORTED
     echo.
     echo        ---------------------------
     echo Usage: build_windows.bat [options]
