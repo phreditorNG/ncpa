@@ -90,6 +90,8 @@ $colorFGmain = "Yellow"
 $colorBGsub = "Black"
 $colorFGsub = "White"
 
+$download_openssl = $download_openssl_python
+$download_python = $download_openssl_python
 # OpenSSL takes a LOOOONG time to build, give option to not build OpenSSL again
 if ($build_openssl){
     if (Test-Path -Path "$openssl_dir\bin\openssl.exe"){
@@ -98,12 +100,13 @@ if ($build_openssl){
         $userInput = Read-Host -Prompt "`nOpenSSL $installed_version build detected at $openssl_dir. Do you want to download/build/install OpenSSL version $openssl_ver`? `n(y/n)"
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $build_openssl = $true
-        } else { $build_openssl = $false }
+        } else {
+            $build_openssl = $false
+            $download_openssl = $false
+        }
     } else { $build_openssl = $true }
 }
 # Offer to not build Python if found installed version
-$download_openssl = $download_openssl_python
-$download_python = $download_openssl_python
 if ($build_python){
     if (Test-Path -Path "$cpython_dir\PCbuild\$cpu_arch\py.exe") {
         $built_version = & "$cpython_dir\PCbuild\$cpu_arch\py.exe" -c "import sys; print(sys.version)"
@@ -113,7 +116,10 @@ if ($build_python){
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $download_openssl = $true
             $build_python = $true
-        } else { $build_python = $false }
+        } else {
+            $build_python = $false
+            $download_openssl = $false
+        }
     } elseif (Test-Path -Path "C:\Windows\py.exe"){
         $installed_version = & "C:\Windows\py.exe" -c "import sys; print(sys.version)"
         $installed_py_ssl = & "C:\Windows\py.exe" -c "import ssl; print(ssl.OPENSSL_VERSION)"
@@ -122,7 +128,10 @@ if ($build_python){
         if ($userInput -eq "yes" -or $userInput -eq "y"){
             $download_python = $true
             $build_python = $true
-        } else { $build_python = $false }
+        } else {
+            $build_python = $false
+            $download_python = $false
+        }
     } else {
         Write-Host "Python not found in $cpython_dir\PCbuild\$cpu_arch\py.exe or C:\Windows\py.exe, building Python"
         $build_python = $true
